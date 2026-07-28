@@ -1,6 +1,6 @@
 .login-content {
   --background: transparent;
-  --overflow: hidden;
+  // Los orbs usan position:fixed así que no necesitan overflow:hidden aquí
 }
 
 // Ambient background orbs
