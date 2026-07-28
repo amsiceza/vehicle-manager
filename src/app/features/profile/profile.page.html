@@ -1,0 +1,92 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading()) {
+    <div class="center-wrap"><ion-spinner name="crescent" /></div>
+  } @else {
+    @if (user(); as u) {
+      <div class="page-content">
+
+        <div class="profile-hero glass-card">
+          <div class="avatar-wrap">
+            @if (u.photoURL) {
+              <img class="avatar-img" [src]="u.photoURL" alt="Foto" />
+            } @else {
+              <div class="avatar-initials">{{ initials() }}</div>
+            }
+            @if (isDemo()) { <div class="demo-badge">DEMO</div> }
+          </div>
+          <div class="identity">
+            <h2>{{ u.name || 'Sin nombre' }}</h2>
+            <p class="email">{{ u.email }}</p>
+            <div class="plan-badge" [class.pro]="u.isPro">
+              <ion-icon [name]="u.isPro ? 'star' : 'star-outline'" />
+              {{ u.isPro ? 'Plan Pro' : 'Plan Gratuito' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <p class="section-label">Datos personales</p>
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <ion-input placeholder="Nombre y apellidos"
+              [ngModel]="editName()" (ngModelChange)="editName.set($event)" />
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <ion-input [value]="u.email" readonly class="readonly-input" />
+          </div>
+          <div class="form-group">
+            <label>Fecha de nacimiento</label>
+            <ion-input type="date"
+              [ngModel]="editBirthDate()" (ngModelChange)="editBirthDate.set($event)" />
+            @if (u.birthDate) {
+              <span class="birth-hint">{{ formatBirthDate(u.birthDate) }}</span>
+            }
+          </div>
+          <ion-button expand="block" (click)="saveProfile()" [disabled]="saving()">
+            @if (saving()) { <ion-spinner name="crescent" slot="start" /> }
+            Guardar cambios
+          </ion-button>
+        </div>
+
+        <div class="form-section">
+          <p class="section-label">Cuenta</p>
+          <div class="info-row">
+            <ion-icon name="calendar-outline" />
+            <div>
+              <div class="info-label">Miembro desde</div>
+              <div class="info-value">{{ memberSince() }}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <ion-icon name="shield-checkmark-outline"
+              [style.color]="u.isPro ? '#FFD700' : 'var(--lg-text-2)'" />
+            <div>
+              <div class="info-label">Plan activo</div>
+              <div class="info-value">
+                {{ u.isPro ? 'Pro — funciones completas' : 'Gratuito — hasta 3 vehículos' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <ion-button expand="block" fill="outline" color="danger" (click)="confirmSignOut()">
+            <ion-icon name="log-out-outline" slot="start" />
+            Cerrar sesión
+          </ion-button>
+          @if (isDemo()) {
+            <p class="demo-note">Estás en modo demo — los datos no se guardan en la nube</p>
+          }
+        </div>
+
+      </div>
+    }
+  }
+</ion-content>

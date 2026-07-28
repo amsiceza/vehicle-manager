@@ -1,0 +1,142 @@
+<ion-header class="ion-no-border modal-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="dismiss()">
+        <ion-icon name="chevron-back-outline" slot="icon-only" />
+      </ion-button>
+    </ion-buttons>
+    <div class="modal-title">{{ vehicle.licensePlate }}</div>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only" />
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+
+  <!-- Hero photo -->
+  <div class="hero">
+    @if (vehicle.photoURLs[0]) {
+      <img [src]="vehicle.photoURLs[0]" [alt]="displayName()" class="hero-img" />
+    } @else {
+      <div class="hero-placeholder">
+        <ion-icon name="car-sport-outline" />
+      </div>
+    }
+    <div class="hero-gradient"></div>
+    <div class="hero-info">
+      <h2>{{ displayName() }}</h2>
+      <p>{{ vehicle.currentMileage.toLocaleString('es-ES') }} km · {{ vehicle.year }}</p>
+    </div>
+  </div>
+
+  <!-- Cost strip -->
+  <div class="cost-strip">
+    <div class="cost-item">
+      <div class="cost-value">{{ eur(totalMaintCost()) }}</div>
+      <div class="cost-label">Mantenimiento</div>
+    </div>
+    <div class="cost-sep"></div>
+    <div class="cost-item">
+      <div class="cost-value">{{ eur(totalModCost()) }}</div>
+      <div class="cost-label">Modificaciones</div>
+    </div>
+    <div class="cost-sep"></div>
+    <div class="cost-item">
+      <div class="cost-value">{{ eur(totalRepairCost()) }}</div>
+      <div class="cost-label">Reparaciones</div>
+    </div>
+  </div>
+
+  <!-- Segment -->
+  <div class="segment-wrap">
+    <ion-segment [value]="activeTab()" (ionChange)="activeTab.set($any($event.detail.value))">
+      <ion-segment-button value="mantenimiento">
+        <ion-icon name="construct-outline" />
+        <ion-label>Mant.</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="modificaciones">
+        <ion-icon name="sparkles-outline" />
+        <ion-label>Mods.</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="reparaciones">
+        <ion-icon name="hammer-outline" />
+        <ion-label>Reparac.</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  @if (loading()) {
+    <app-loading message="Cargando historial…" />
+  } @else {
+    <div class="tab-content">
+
+      <!-- MANTENIMIENTOS -->
+      @if (activeTab() === 'mantenimiento') {
+        @for (log of maintenanceLogs(); track log.id) {
+          <div class="log-row">
+            <div class="log-icon blue">
+              <ion-icon [name]="MAINTENANCE_ICONS[log.type]" />
+            </div>
+            <div class="log-body">
+              <div class="log-title">{{ log.type }}</div>
+              <div class="log-meta">{{ fmtDate(log.date) }} · {{ log.mileage.toLocaleString('es-ES') }} km</div>
+              @if (log.notes) { <div class="log-note">{{ log.notes }}</div> }
+            </div>
+            <div class="log-cost">{{ eur(log.cost) }}</div>
+          </div>
+        } @empty {
+          <app-empty-state icon="construct-outline" title="Sin mantenimientos" subtitle="Aún no hay registros." />
+        }
+      }
+
+      <!-- MODIFICACIONES -->
+      @if (activeTab() === 'modificaciones') {
+        @for (mod of modifications(); track mod.id) {
+          <div class="log-row">
+            <div class="log-icon purple">
+              <ion-icon name="sparkles-outline" />
+            </div>
+            <div class="log-body">
+              <div class="log-title">{{ mod.partName }}</div>
+              <div class="log-meta">{{ mod.brand }} · {{ mod.category }}</div>
+              @if (mod.notes) { <div class="log-note">{{ mod.notes }}</div> }
+              <div class="log-meta muted">{{ fmtMonth(mod.createdAt) }}</div>
+            </div>
+            <div class="log-cost">{{ eur(mod.cost) }}</div>
+          </div>
+        } @empty {
+          <app-empty-state icon="sparkles-outline" title="Sin modificaciones" subtitle="Registra upgrades y tuning." />
+        }
+      }
+
+      <!-- REPARACIONES -->
+      @if (activeTab() === 'reparaciones') {
+        @for (rep of repairs(); track rep.id) {
+          <div class="log-row">
+            <div class="log-icon" [class.green]="rep.isInsuranceClaim" [class.orange]="!rep.isInsuranceClaim">
+              <ion-icon [name]="rep.isInsuranceClaim ? 'shield-checkmark-outline' : 'hammer-outline'" />
+            </div>
+            <div class="log-body">
+              <div class="log-title">{{ rep.description }}</div>
+              <div class="log-meta">{{ rep.workshop }} · {{ fmtDate(rep.date) }}</div>
+              @if (rep.isInsuranceClaim) {
+                <div class="insurance-tag">
+                  <ion-icon name="shield-checkmark-outline" />Tramitado con seguro
+                </div>
+              }
+              @if (rep.notes) { <div class="log-note">{{ rep.notes }}</div> }
+            </div>
+            <div class="log-cost">{{ eur(rep.cost) }}</div>
+          </div>
+        } @empty {
+          <app-empty-state icon="hammer-outline" title="Sin reparaciones" subtitle="Registra daños y reparaciones." />
+        }
+      }
+
+    </div>
+  }
+
+</ion-content>

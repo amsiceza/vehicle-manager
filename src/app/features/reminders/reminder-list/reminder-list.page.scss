@@ -1,0 +1,80 @@
+.section-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--lg-text-2); margin: 0 0 8px;
+  ion-icon { font-size: 13px; }
+}
+
+.alert-card {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,149,0,0.25);
+  background: rgba(255,149,0,0.06);
+  position: relative;
+  &.overdue { border-color: rgba(255,55,95,0.35); background: rgba(255,55,95,0.07); }
+}
+
+.alert-icon {
+  width: 40px; height: 40px; min-width: 40px;
+  background: rgba(255,149,0,0.15); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  ion-icon { font-size: 20px; color: var(--ion-color-warning); }
+  .overdue & { background: rgba(255,55,95,0.15); ion-icon { color: var(--ion-color-danger); } }
+}
+
+.alert-body { flex: 1; min-width: 0; }
+.alert-title   { font-size: 14px; font-weight: 600; color: var(--lg-text); margin-bottom: 2px; }
+.alert-vehicle { font-size: 12px; color: var(--lg-text-2); margin-bottom: 6px; }
+
+.status-dot {
+  width: 8px; height: 8px; min-width: 8px; border-radius: 50%;
+  background: var(--ion-color-warning); margin-top: 4px;
+  &.overdue { background: var(--ion-color-danger); }
+}
+
+.reminder-card {
+  display: flex; align-items: flex-start; gap: 12px; padding: 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  &.triggered { opacity: 0.5; }
+}
+
+.reminder-icon {
+  width: 38px; height: 38px; min-width: 38px;
+  background: rgba(0,122,255,0.12); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  ion-icon { font-size: 18px; color: var(--ion-color-primary); }
+  &.done { background: rgba(52,199,89,0.12); ion-icon { color: var(--ion-color-success); } }
+}
+
+.reminder-body  { flex: 1; }
+.reminder-title { font-size: 14px; font-weight: 600; color: var(--lg-text); margin-bottom: 2px; }
+.reminder-vehicle { font-size: 12px; color: var(--lg-text-2); margin-bottom: 6px; }
+
+.alert-triggers { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 500;
+  ion-icon { font-size: 11px; }
+  &.km-tag     { background: rgba(0,122,255,0.1);  color: #5AC8FA; border: 1px solid rgba(0,122,255,0.2); }
+  &.date-tag   { background: rgba(90,200,250,0.1); color: #5AC8FA; border: 1px solid rgba(90,200,250,0.2); }
+  &.overdue-tag{ background: rgba(255,55,95,0.1);  color: var(--ion-color-danger); border: 1px solid rgba(255,55,95,0.25); }
+}
+
+.header-end {
+  display: flex; align-items: center; padding-right: 14px;
+}
+
+.theme-icon {
+  font-size: 22px; color: rgba(255,255,255,0.75);
+  cursor: pointer; padding: 6px; border-radius: 50%;
+  transition: background 0.15s, transform 0.12s;
+  &:hover  { background: rgba(255,255,255,0.08); }
+  &:active { transform: scale(0.85); }
+}
+
+:root.theme-light .theme-icon { color: rgba(0,0,0,0.7); }

@@ -1,0 +1,74 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/app/vehicles" />
+    </ion-buttons>
+    <ion-title>{{ isEdit() ? 'Editar vehículo' : 'Nuevo vehículo' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="save()" [disabled]="loading()">
+        @if (loading()) { <ion-spinner name="crescent" /> }
+        @else { <strong>Guardar</strong> }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-content">
+    <!-- Basic info -->
+    <div class="form-section animate-fadein-up">
+      <p class="section-label">Datos del vehículo</p>
+
+      <div class="form-group">
+        <label>Marca</label>
+        <ion-input placeholder="Toyota, BMW, Seat…"
+          [ngModel]="brand()" (ngModelChange)="brand.set($event)" />
+      </div>
+
+      <div class="form-group">
+        <label>Modelo</label>
+        <ion-input placeholder="Corolla, Serie 3, Ibiza…"
+          [ngModel]="model()" (ngModelChange)="model.set($event)" />
+      </div>
+
+      <div class="form-group">
+        <label>Matrícula</label>
+        <ion-input placeholder="1234 ABC"
+          [ngModel]="licensePlate()" (ngModelChange)="licensePlate.set($event)"
+          style="text-transform: uppercase" />
+      </div>
+
+      <div class="row-fields">
+        <div class="form-group">
+          <label>Año</label>
+          <ion-select
+            [ngModel]="year()" (ngModelChange)="year.set($event)"
+            interface="action-sheet"
+            placeholder="Año">
+            @for (y of years; track y) {
+              <ion-select-option [value]="y">{{ y }}</ion-select-option>
+            }
+          </ion-select>
+        </div>
+
+        <div class="form-group">
+          <label>Km actuales</label>
+          <ion-input type="number" placeholder="0"
+            [ngModel]="currentMileage()" (ngModelChange)="currentMileage.set(+$event)" />
+        </div>
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="error-banner animate-fadein-up">
+        <ion-icon name="alert-circle-outline" />
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <ion-button expand="block" (click)="save()" [disabled]="loading()">
+      @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
+      {{ isEdit() ? 'Actualizar vehículo' : 'Añadir vehículo' }}
+    </ion-button>
+  </div>
+</ion-content>

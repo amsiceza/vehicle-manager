@@ -1,0 +1,66 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Mis Vehículos</ion-title>
+    <div slot="end" class="header-end">
+      <!-- <button class="theme-btn" (click)="theme.toggle()">
+        <ion-icon [name]="theme.isDark() ? 'sunny-outline' : 'moon-outline'" />
+      </button> -->
+      @if (isDemo()) { <span class="demo-chip">DEMO</span> }
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading()) {
+    <app-loading message="Cargando vehículos…" />
+  } @else if (error()) {
+    <app-empty-state
+      icon="alert-circle-outline" title="Error"
+      [subtitle]="error()" actionLabel="Reintentar" (action)="load()"
+    />
+  } @else if (vehicles().length === 0) {
+    <app-empty-state
+      icon="car-sport-outline" title="Sin vehículos"
+      subtitle="Añade tu primer vehículo para empezar."
+      actionLabel="Añadir" (action)="handleAdd()"
+    />
+  } @else {
+    <div class="grid">
+      @for (v of vehicles(); track v.id) {
+        <button class="v-card" (click)="openDetail(v)">
+          <div class="v-photo">
+            @if (v.photoURLs[0]) {
+              <img [src]="v.photoURLs[0]" [alt]="v.brand" loading="lazy" />
+            } @else {
+              <div class="v-photo-placeholder">
+                <ion-icon name="car-sport-outline" />
+              </div>
+            }
+            <div class="v-gradient"></div>
+            <span class="v-year">{{ v.year }}</span>
+          </div>
+          <div class="v-info">
+            <div class="v-name">{{ v.brand }} {{ v.model }}</div>
+            <div class="v-meta">
+              <span>{{ v.licensePlate }}</span>
+              <span class="v-km">
+                <ion-icon name="speedometer-outline" />
+                {{ v.currentMileage.toLocaleString('es-ES') }}
+              </span>
+            </div>
+          </div>
+        </button>
+      }
+    </div>
+  }
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="handleAdd()">
+      <ion-icon name="add-outline" />
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+@if (showPaywall()) {
+  <app-paywall (close)="showPaywall.set(false)" />
+}

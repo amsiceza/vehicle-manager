@@ -1,0 +1,75 @@
+<ion-content class="login-content">
+  <div class="login-bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="login-container animate-fadein-up">
+
+    <!-- Logo -->
+    <div class="login-hero">
+      <div class="app-icon">
+        <ion-icon name="car-sport-outline" />
+      </div>
+      <h1>VehicleManager</h1>
+      <p class="subtitle">Gestiona tus vehículos con estilo</p>
+    </div>
+
+    <!-- Demo banner -->
+    <div class="demo-banner">
+      <div class="demo-banner-text">
+        <ion-icon name="sparkles-outline" />
+        <span>¿Sin cuenta? Prueba la app ahora mismo</span>
+      </div>
+      <ion-button expand="block" class="demo-btn" (click)="demoLogin()" [disabled]="demoLoading()">
+        @if (demoLoading()) { <ion-spinner name="crescent" slot="start" /> }
+        @else { <ion-icon name="flash-outline" slot="start" /> }
+        Entrar en modo demo
+      </ion-button>
+    </div>
+
+    <div class="divider"><span>o inicia sesión con tu cuenta</span></div>
+
+    <!-- Form -->
+    <div class="form-section">
+      <div class="form-group">
+        <label>Email</label>
+        <ion-input
+          type="email" placeholder="tu@email.com"
+          [ngModel]="email()" (ngModelChange)="email.set($event)"
+          autocomplete="email" inputmode="email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <ion-input
+          type="password" placeholder="••••••••"
+          [ngModel]="password()" (ngModelChange)="password.set($event)"
+          autocomplete="current-password"
+        />
+      </div>
+
+      @if (error()) {
+        <div class="error-banner">
+          <ion-icon name="alert-circle-outline" />
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <ion-button expand="block" (click)="login()" [disabled]="loading()">
+        @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
+        Iniciar sesión
+      </ion-button>
+
+      <button class="link-btn" (click)="resetPassword()">¿Olvidaste tu contraseña?</button>
+    </div>
+
+    <div class="register-link">
+      <span>¿No tienes cuenta?</span>
+      <a routerLink="/auth/register">Crear cuenta gratis</a>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,0 +1,54 @@
+.hero-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+
+  .hero-placeholder {
+    width: 100%; height: 100%;
+    background: var(--lg-bg-md);
+    display: flex; align-items: center; justify-content: center;
+    ion-icon { font-size: 64px; color: var(--lg-text-3); }
+  }
+
+  .hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, rgba(7, 7, 14, 0.95) 100%);
+  }
+
+  .hero-info {
+    position: absolute;
+    bottom: 16px; left: 16px;
+
+    h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px; }
+    p  { font-size: 14px; color: var(--lg-text-2); margin: 0; }
+  }
+}
+
+.tab-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+
+  .section-label { margin: 0; }
+}
+
+.spec-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0;
+
+  .spec-key  { font-size: 14px; color: var(--lg-text-2); }
+  .spec-value { font-size: 14px; font-weight: 600; color: var(--lg-text); }
+}

@@ -1,0 +1,97 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Avisos</ion-title>
+    <div slot="end" class="header-end">
+      <!-- <button class="theme-btn" (click)="theme.toggle()">
+        <ion-icon [name]="theme.isDark() ? 'sunny-outline' : 'moon-outline'" />
+      </button> -->
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading()) {
+    <app-loading />
+  } @else if (maintenanceAlerts().length === 0 && reminders().length === 0) {
+    <app-empty-state
+      icon="notifications-outline"
+      title="Todo al día"
+      subtitle="No tienes avisos pendientes ni recordatorios próximos."
+    />
+  } @else {
+    <div class="page-content">
+
+      @if (maintenanceAlerts().length > 0) {
+        <p class="section-label">
+          <ion-icon name="construct-outline" />Períodos de mantenimiento
+        </p>
+        @for (alert of maintenanceAlerts(); track alert.vehicleId + alert.type) {
+          <div class="alert-card" [class.overdue]="alert.status === 'overdue'">
+            <div class="alert-icon">
+              <ion-icon [name]="alert.icon" />
+            </div>
+            <div class="alert-body">
+              <div class="alert-title">{{ alert.label }}</div>
+              <div class="alert-vehicle">{{ alert.vehicleName }}</div>
+              <div class="alert-triggers">
+                @if (alert.nextKm !== undefined) {
+                  @if ((alert.kmRemaining ?? 0) <= 0) {
+                    <span class="tag overdue-tag">
+                      <ion-icon name="alert-circle-outline" />{{ formatKm(alert.currentKm - (alert.nextKm || 0)) }} km pasados
+                    </span>
+                  } @else {
+                    <span class="tag km-tag">
+                      <ion-icon name="speedometer-outline" />Faltan {{ formatKm(alert.kmRemaining!) }} km
+                    </span>
+                  }
+                }
+                @if (alert.nextDate) {
+                  @if ((alert.daysRemaining ?? 0) <= 0) {
+                    <span class="tag overdue-tag">
+                      <ion-icon name="alert-circle-outline" />Venció {{ formatDate(alert.nextDate) }}
+                    </span>
+                  } @else {
+                    <span class="tag date-tag">
+                      <ion-icon name="calendar-outline" />{{ alert.daysRemaining }} días
+                    </span>
+                  }
+                }
+              </div>
+            </div>
+            <div class="status-dot" [class.overdue]="alert.status === 'overdue'"></div>
+          </div>
+        }
+      }
+
+      @if (reminders().length > 0) {
+        <p class="section-label" style="margin-top:8px">
+          <ion-icon name="notifications-outline" />Recordatorios
+        </p>
+        @for (item of reminders(); track item.reminder.id) {
+          <div class="reminder-card" [class.triggered]="item.reminder.isTriggered">
+            <div class="reminder-icon" [class.done]="item.reminder.isTriggered">
+              <ion-icon [name]="item.reminder.isTriggered ? 'checkmark-circle-outline' : 'notifications-outline'" />
+            </div>
+            <div class="reminder-body">
+              <div class="reminder-title">{{ item.reminder.title }}</div>
+              <div class="reminder-vehicle">{{ item.vehicleName }}</div>
+              <div class="alert-triggers">
+                @if (item.reminder.dueDate) {
+                  <span class="tag date-tag">
+                    <ion-icon name="calendar-outline" />{{ formatDate(item.reminder.dueDate) }}
+                  </span>
+                }
+                @if (item.reminder.dueMileage) {
+                  <span class="tag km-tag">
+                    <ion-icon name="speedometer-outline" />{{ formatKm(item.reminder.dueMileage) }} km
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+    </div>
+  }
+</ion-content>

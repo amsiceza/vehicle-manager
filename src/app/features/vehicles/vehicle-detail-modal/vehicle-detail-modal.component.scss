@@ -1,0 +1,135 @@
+// ── Header ────────────────────────────────────────────────────
+.modal-header ion-toolbar {
+  --background: rgba(7, 7, 14, 0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lg-text);
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+// ── Content ───────────────────────────────────────────────────
+.modal-content {
+  --background: #07070e;
+}
+
+// ── Hero ──────────────────────────────────────────────────────
+.hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 8;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+
+  .hero-img { width: 100%; height: 100%; object-fit: cover; }
+
+  .hero-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(0,122,255,0.1), rgba(94,92,230,0.12));
+    ion-icon { font-size: 64px; color: rgba(255,255,255,0.15); }
+  }
+
+  .hero-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, rgba(7,7,14,0.9) 100%);
+  }
+
+  .hero-info {
+    position: absolute; bottom: 14px; left: 16px;
+    h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.035em; margin-bottom: 3px; }
+    p  { font-size: 13px; color: rgba(255,255,255,0.65); margin: 0; }
+  }
+}
+
+// ── Cost strip ────────────────────────────────────────────────
+.cost-strip {
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.cost-item {
+  flex: 1; text-align: center; padding: 13px 6px;
+  .cost-value { font-size: 15px; font-weight: 800; color: var(--lg-text); letter-spacing: -0.025em; }
+  .cost-label { font-size: 10px; color: var(--lg-text-2); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+}
+
+.cost-sep { width: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
+
+// ── Segment ───────────────────────────────────────────────────
+.segment-wrap {
+  padding: 12px 14px 10px;
+  background: rgba(7,7,14,0.9);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  ion-segment {
+    --background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 3px;
+  }
+
+  ion-segment-button {
+    --background-checked: rgba(255,255,255,0.14);
+    --color: rgba(255,255,255,0.45);
+    --color-checked: rgba(255,255,255,0.95);
+    --indicator-color: transparent;
+    --border-radius: 999px;
+    min-height: 36px;
+
+    ion-icon  { font-size: 15px; margin-bottom: 1px; }
+    ion-label { font-size: 11px; font-weight: 600; }
+  }
+}
+
+// ── Tab content ───────────────────────────────────────────────
+.tab-content {
+  padding: 14px 14px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+// ── Log row ───────────────────────────────────────────────────
+.log-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+}
+
+.log-icon {
+  width: 42px; height: 42px; min-width: 42px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  ion-icon { font-size: 21px; }
+
+  &.blue   { background: rgba(0,122,255,0.15);   ion-icon { color: #5AC8FA; } }
+  &.purple { background: rgba(94,92,230,0.15);   ion-icon { color: #8E8CFF; } }
+  &.orange { background: rgba(255,149,0,0.15);   ion-icon { color: #FF9500; } }
+  &.green  { background: rgba(52,199,89,0.15);   ion-icon { color: #34C759; } }
+}
+
+.log-body  { flex: 1; min-width: 0; }
+.log-title { font-size: 15px; font-weight: 600; color: var(--lg-text); margin-bottom: 3px; }
+.log-meta  { font-size: 12px; color: var(--lg-text-2); line-height: 1.4; }
+.log-note  { font-size: 11px; color: var(--lg-text-3); margin-top: 3px; font-style: italic;
+             overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+             -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.log-cost  { font-size: 15px; font-weight: 700; color: var(--lg-text); white-space: nowrap; align-self: center; }
+.muted     { opacity: 0.55; }
+
+.insurance-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 4px; font-size: 11px; font-weight: 600; color: #34C759;
+  ion-icon { font-size: 12px; }
+}

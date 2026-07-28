@@ -1,0 +1,51 @@
+<ion-content class="login-content">
+  <div class="login-bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <div class="login-container animate-fadein-up">
+    <div class="login-hero">
+      <div class="app-icon">
+        <ion-icon name="shield-checkmark-outline" />
+      </div>
+      <h1>Crear cuenta</h1>
+      <p class="subtitle">Gratis · Hasta {{ limit }} vehículos incluidos</p>
+    </div>
+
+    <div class="form-section">
+      <div class="form-group">
+        <label>Email</label>
+        <ion-input type="email" placeholder="tu@email.com"
+          [ngModel]="email()" (ngModelChange)="email.set($event)" />
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <ion-input type="password" placeholder="Mínimo 6 caracteres"
+          [ngModel]="password()" (ngModelChange)="password.set($event)" />
+      </div>
+      <div class="form-group">
+        <label>Confirmar contraseña</label>
+        <ion-input type="password" placeholder="Repite la contraseña"
+          [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" />
+      </div>
+
+      @if (error()) {
+        <div class="error-banner">
+          <ion-icon name="alert-circle-outline" />
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <ion-button expand="block" (click)="register()" [disabled]="loading()">
+        @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
+        Registrarse
+      </ion-button>
+    </div>
+
+    <div class="register-link">
+      <span>¿Ya tienes cuenta?</span>
+      <a routerLink="/auth/login">Iniciar sesión</a>
+    </div>
+  </div>
+</ion-content>

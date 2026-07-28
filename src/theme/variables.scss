@@ -1,0 +1,253 @@
+// ============================================================
+//   LIQUID GLASS — Design System
+//   Dark (default) + Light override
+// ============================================================
+
+// ── 1. Ionic Color Palette (shared) ──────────────────────────
+:root {
+  --ion-color-primary: #007AFF;
+  --ion-color-primary-rgb: 0, 122, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #006be0;
+  --ion-color-primary-tint: #1a87ff;
+
+  --ion-color-secondary: #5E5CE6;
+  --ion-color-secondary-rgb: 94, 92, 230;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-shade: #5351ca;
+  --ion-color-secondary-tint: #6e6ce9;
+
+  --ion-color-tertiary: #5AC8FA;
+  --ion-color-tertiary-rgb: 90, 200, 250;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-shade: #4fb0dc;
+  --ion-color-tertiary-tint: #6ccefb;
+
+  --ion-color-success: #34C759;
+  --ion-color-success-rgb: 52, 199, 89;
+  --ion-color-success-contrast: #000000;
+  --ion-color-success-shade: #2eb050;
+  --ion-color-success-tint: #48cd6a;
+
+  --ion-color-warning: #FF9500;
+  --ion-color-warning-rgb: 255, 149, 0;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-shade: #e08400;
+  --ion-color-warning-tint: #ffa01a;
+
+  --ion-color-danger: #FF375F;
+  --ion-color-danger-rgb: 255, 55, 95;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-shade: #e03054;
+  --ion-color-danger-tint: #ff4b6f;
+
+  --ion-color-dark: #1c1c1e;
+  --ion-color-medium: rgba(255, 255, 255, 0.45);
+  --ion-color-light: rgba(255, 255, 255, 0.08);
+}
+
+// ── 2. Liquid Glass tokens — DARK (default) ──────────────────
+:root {
+  --lg-blur: blur(28px) saturate(200%) brightness(1.05);
+  --lg-blur-sm: blur(16px) saturate(180%);
+  --lg-blur-lg: blur(48px) saturate(220%);
+
+  --lg-bg: rgba(255, 255, 255, 0.07);
+  --lg-bg-md: rgba(255, 255, 255, 0.11);
+  --lg-bg-strong: rgba(255, 255, 255, 0.18);
+  --lg-bg-pressed: rgba(255, 255, 255, 0.22);
+
+  --lg-border: rgba(255, 255, 255, 0.14);
+  --lg-border-bright: rgba(255, 255, 255, 0.28);
+  --lg-border-glow: rgba(0, 122, 255, 0.45);
+
+  --lg-shadow: 0 4px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18), inset 0 -1px 0 rgba(0,0,0,.12);
+  --lg-shadow-lg: 0 16px 56px rgba(0,0,0,.5), 0 4px 16px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.22);
+
+  --lg-glow-blue:   0 0 40px rgba(0, 122, 255, 0.28), 0 0 80px rgba(0, 122, 255, 0.12);
+  --lg-glow-purple: 0 0 40px rgba(94, 92, 230, 0.30), 0 0 80px rgba(94, 92, 230, 0.12);
+
+  --lg-gradient-primary: linear-gradient(135deg, #007AFF 0%, #5E5CE6 100%);
+  --lg-gradient-card: linear-gradient(145deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.04) 100%);
+  --lg-gradient-shine: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 55%);
+  --lg-gradient-btn: linear-gradient(160deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 100%);
+
+  --lg-text:  rgba(255, 255, 255, 0.94);
+  --lg-text-2: rgba(255, 255, 255, 0.62);
+  --lg-text-3: rgba(255, 255, 255, 0.35);
+
+  --lg-r-xs: 8px;  --lg-r-sm: 12px; --lg-r-md: 18px; --lg-r-lg: 24px;
+  --lg-r-xl: 32px; --lg-r-2xl: 44px; --lg-r-full: 9999px;
+
+  --lg-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --lg-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --lg-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --lg-dur-fast: 0.15s; --lg-dur-base: 0.26s; --lg-dur-slow: 0.42s;
+}
+
+// ── 3. App background — DARK ──────────────────────────────────
+body, ion-app {
+  --ion-background-color: #07070e;
+  --ion-background-color-rgb: 7, 7, 14;
+  --ion-text-color: var(--lg-text);
+  --ion-text-color-rgb: 255, 255, 255;
+  background: #07070e;
+  background-image:
+    radial-gradient(ellipse at 25% 0%,   rgba(94, 92, 230, 0.22) 0%, transparent 52%),
+    radial-gradient(ellipse at 80% 80%,  rgba(0, 122, 255, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 55% 50%,  rgba(255, 55, 95, 0.07) 0%, transparent 42%);
+  background-attachment: fixed;
+}
+
+// ── 4. Liquid Glass — LIGHT override ─────────────────────────
+:root.theme-light {
+  --lg-bg: rgba(255, 255, 255, 0.55);
+  --lg-bg-md: rgba(255, 255, 255, 0.70);
+  --lg-bg-strong: rgba(255, 255, 255, 0.88);
+  --lg-bg-pressed: rgba(0, 0, 0, 0.06);
+
+  --lg-border: rgba(0, 0, 0, 0.10);
+  --lg-border-bright: rgba(0, 0, 0, 0.18);
+
+  --lg-shadow: 0 4px 24px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.9);
+  --lg-shadow-lg: 0 16px 48px rgba(0,0,0,.14), 0 4px 16px rgba(0,0,0,.06);
+
+  --lg-glow-blue:   0 0 40px rgba(0, 122, 255, 0.15);
+  --lg-glow-purple: 0 0 40px rgba(94, 92, 230, 0.12);
+
+  --lg-gradient-card: linear-gradient(145deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.55) 100%);
+  --lg-gradient-shine: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 55%);
+
+  --lg-text:  rgba(0, 0, 0, 0.88);
+  --lg-text-2: rgba(0, 0, 0, 0.52);
+  --lg-text-3: rgba(0, 0, 0, 0.28);
+}
+
+:root.theme-light body,
+:root.theme-light ion-app {
+  --ion-background-color: #e8eaf2;
+  --ion-background-color-rgb: 232, 234, 242;
+  --ion-text-color: rgba(0,0,0,0.88);
+  --ion-text-color-rgb: 0, 0, 0;
+  background: #e8eaf2;
+  background-image:
+    radial-gradient(ellipse at 25% 0%,   rgba(94, 92, 230, 0.08) 0%, transparent 52%),
+    radial-gradient(ellipse at 80% 80%,  rgba(0, 122, 255, 0.06) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+// ── 5. Ionic Component Overrides — shared ────────────────────
+ion-header::after { display: none; }
+
+ion-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  backdrop-filter: var(--lg-blur-sm);
+  background: rgba(7, 7, 14, 0.65) !important;
+  border-bottom: 1px solid var(--lg-border);
+
+  ion-title { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; color: var(--lg-text); }
+  ion-back-button, ion-buttons ion-button { --color: var(--ion-color-primary); }
+}
+
+:root.theme-light ion-toolbar {
+  background: rgba(232, 234, 242, 0.80) !important;
+}
+
+ion-content { --background: transparent; --padding-bottom: 80px; }
+
+ion-tab-bar {
+  --background: transparent;
+  backdrop-filter: var(--lg-blur);
+  background: rgba(7, 7, 14, 0.75) !important;
+  border-top: 1px solid var(--lg-border);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-top: 8px;
+
+  ion-tab-button {
+    --background: transparent;
+    --color: var(--lg-text-3);
+    --color-selected: var(--ion-color-primary);
+    transition: transform 0.15s ease;
+    &:active { transform: scale(0.9); }
+    ion-icon { font-size: 22px; }
+    ion-label { font-size: 10px; font-weight: 500; margin-top: 3px; }
+  }
+}
+
+:root.theme-light ion-tab-bar { background: rgba(232, 234, 242, 0.85) !important; }
+
+ion-segment {
+  --background: var(--lg-bg);
+  border: 1px solid var(--lg-border);
+  border-radius: var(--lg-r-full);
+  padding: 3px;
+  backdrop-filter: var(--lg-blur-sm);
+
+  ion-segment-button {
+    --background-checked: var(--lg-bg-strong);
+    --color: var(--lg-text-2);
+    --color-checked: var(--lg-text);
+    --indicator-color: transparent;
+    --border-radius: var(--lg-r-full);
+    font-weight: 600; font-size: 13px; min-height: 32px;
+  }
+}
+
+ion-fab-button {
+  --background: var(--lg-gradient-primary);
+  --box-shadow: var(--lg-glow-blue), var(--lg-shadow-lg);
+  --border-radius: var(--lg-r-lg);
+  transition: transform 0.15s ease, box-shadow 0.2s;
+  &:active { transform: scale(0.93); }
+}
+
+ion-chip {
+  --background: var(--lg-bg-md); --color: var(--lg-text);
+  border: 1px solid var(--lg-border); backdrop-filter: var(--lg-blur-sm);
+}
+
+ion-modal {
+  --background: transparent;
+  --border-radius: var(--lg-r-xl);
+
+  &::part(content) {
+    background: rgba(10, 10, 18, 0.92) !important;
+    backdrop-filter: var(--lg-blur-lg);
+    border: 1px solid var(--lg-border-bright);
+    border-bottom: none;
+    box-shadow: var(--lg-shadow-lg);
+  }
+}
+
+:root.theme-light ion-modal::part(content) {
+  background: rgba(220, 222, 232, 0.96) !important;
+}
+
+ion-alert {
+  --background: rgba(18, 18, 28, 0.96);
+  --backdrop-opacity: 0.65;
+  &::part(container) {
+    backdrop-filter: var(--lg-blur-lg);
+    border: 1px solid var(--lg-border-bright);
+    border-radius: var(--lg-r-xl);
+    box-shadow: var(--lg-shadow-lg);
+  }
+  .alert-title { color: var(--lg-text); font-weight: 700; }
+  .alert-message { color: var(--lg-text-2); }
+  .alert-button { font-weight: 600; }
+}
+
+:root.theme-light ion-alert { --background: rgba(240, 242, 248, 0.98); }
+
+ion-toast {
+  --background: rgba(30, 30, 44, 0.96);
+  --color: var(--lg-text);
+  --border-radius: var(--lg-r-md);
+  --box-shadow: var(--lg-shadow-lg);
+  border: 1px solid var(--lg-border-bright);
+  font-weight: 500;
+}
+
+:root.theme-light ion-toast { --background: rgba(240, 242, 248, 0.98); }

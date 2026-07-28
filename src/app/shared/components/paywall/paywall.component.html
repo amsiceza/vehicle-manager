@@ -1,0 +1,39 @@
+<div class="paywall-backdrop" (click)="close.emit()"></div>
+
+<div class="paywall-sheet animate-glass">
+  <div class="sheet-handle"></div>
+
+  <div class="paywall-header">
+    <div class="pro-badge">
+      <ion-icon name="star" />
+      PRO
+    </div>
+    <button class="close-btn" (click)="close.emit()">
+      <ion-icon name="close-outline" />
+    </button>
+  </div>
+
+  <h2>Desbloquea <span class="tint">VehicleManager Pro</span></h2>
+  <p class="hero-sub">Has alcanzado el límite de {{ limit }} vehículos del plan gratuito.</p>
+
+  <div class="features-list">
+    @for (f of features; track f.title) {
+      <div class="feature-row">
+        <div class="feature-icon">
+          <ion-icon [name]="f.icon" />
+        </div>
+        <div>
+          <div class="feature-title">{{ f.title }}</div>
+          <div class="feature-desc">{{ f.desc }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <ion-button expand="block" class="cta-btn">
+    <ion-icon name="star" slot="start" />
+    Obtener Pro — 4,99 €/mes
+  </ion-button>
+
+  <button class="restore-btn" (click)="close.emit()">Restaurar compra</button>
+</div>

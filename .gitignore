@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+www/
+dist/
+
+# Angular cache
+.angular/
+
+# Environment (keep template, ignore real keys)
+src/environments/environment.prod.ts
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
