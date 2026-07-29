@@ -1,0 +1,12 @@
+<div class="icon-grid">
+  @for (opt of options; track opt) {
+    <button
+      type="button"
+      class="icon-opt"
+      [class.selected]="opt === value"
+      (click)="select(opt)"
+    >
+      <ion-icon [name]="opt" />
+    </button>
+  }
+</div>

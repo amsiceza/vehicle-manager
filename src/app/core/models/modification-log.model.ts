@@ -8,7 +8,10 @@ export interface ModificationLog {
   notes: string;
   photoURLs: string[];
   createdAt: Date;
+  icon?: string;
 }
+
+export const DEFAULT_MODIFICATION_ICON = 'sparkles-outline';
 
 export const MODIFICATION_CATEGORIES = [
   'Motor', 'Escape', 'Suspensión', 'Frenos', 'Aerodinámica',

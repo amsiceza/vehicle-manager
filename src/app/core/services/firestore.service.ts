@@ -73,6 +73,10 @@ export class FirestoreService {
     if (this.demo.active()) { this.demoMaint[log.vehicleId] = [log, ...(this.demoMaint[log.vehicleId] ?? [])]; return; }
     await setDoc(doc(this.fs, 'maintenanceLogs', log.id), this.toFs(log));
   }
+  async updateMaintenanceLog(log: Partial<MaintenanceLog> & { id: string }): Promise<void> {
+    if (this.demo.active()) { for (const k of Object.keys(this.demoMaint)) { const i = this.demoMaint[k].findIndex(x => x.id === log.id); if (i >= 0) this.demoMaint[k][i] = { ...this.demoMaint[k][i], ...log }; } return; }
+    await updateDoc(doc(this.fs, 'maintenanceLogs', log.id), this.toFs(log));
+  }
   async deleteMaintenanceLog(id: string): Promise<void> {
     if (this.demo.active()) { for (const k of Object.keys(this.demoMaint)) this.demoMaint[k] = this.demoMaint[k].filter(l => l.id !== id); return; }
     await deleteDoc(doc(this.fs, 'maintenanceLogs', id));
@@ -88,6 +92,10 @@ export class FirestoreService {
     if (this.demo.active()) { this.demoMods[mod.vehicleId] = [mod, ...(this.demoMods[mod.vehicleId] ?? [])]; return; }
     await setDoc(doc(this.fs, 'modifications', mod.id), this.toFs(mod));
   }
+  async updateModification(mod: Partial<ModificationLog> & { id: string }): Promise<void> {
+    if (this.demo.active()) { for (const k of Object.keys(this.demoMods)) { const i = this.demoMods[k].findIndex(x => x.id === mod.id); if (i >= 0) this.demoMods[k][i] = { ...this.demoMods[k][i], ...mod }; } return; }
+    await updateDoc(doc(this.fs, 'modifications', mod.id), this.toFs(mod));
+  }
   async deleteModification(id: string): Promise<void> {
     if (this.demo.active()) { for (const k of Object.keys(this.demoMods)) this.demoMods[k] = this.demoMods[k].filter(m => m.id !== id); return; }
     await deleteDoc(doc(this.fs, 'modifications', id));
@@ -102,6 +110,10 @@ export class FirestoreService {
   async saveRepairLog(r: RepairLog): Promise<void> {
     if (this.demo.active()) { this.demoRepairs[r.vehicleId] = [r, ...(this.demoRepairs[r.vehicleId] ?? [])]; return; }
     await setDoc(doc(this.fs, 'repairLogs', r.id), this.toFs(r));
+  }
+  async updateRepairLog(r: Partial<RepairLog> & { id: string }): Promise<void> {
+    if (this.demo.active()) { for (const k of Object.keys(this.demoRepairs)) { const i = this.demoRepairs[k].findIndex(x => x.id === r.id); if (i >= 0) this.demoRepairs[k][i] = { ...this.demoRepairs[k][i], ...r }; } return; }
+    await updateDoc(doc(this.fs, 'repairLogs', r.id), this.toFs(r));
   }
   async deleteRepairLog(id: string): Promise<void> {
     if (this.demo.active()) { for (const k of Object.keys(this.demoRepairs)) this.demoRepairs[k] = this.demoRepairs[k].filter(r => r.id !== id); return; }

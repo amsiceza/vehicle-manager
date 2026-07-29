@@ -73,12 +73,17 @@
   } @else {
     <div class="tab-content">
 
+      <button type="button" class="add-item-btn" (click)="addCurrentTabItem()">
+        <ion-icon name="add-outline" />
+        Añadir
+      </button>
+
       <!-- MANTENIMIENTOS -->
       @if (activeTab() === 'mantenimiento') {
         @for (log of maintenanceLogs(); track log.id) {
-          <div class="log-row">
+          <button type="button" class="log-row" (click)="openMaintenanceForm(log)">
             <div class="log-icon blue">
-              <ion-icon [name]="MAINTENANCE_ICONS[log.type]" />
+              <ion-icon [name]="log.icon ?? MAINTENANCE_ICONS[log.type]" />
             </div>
             <div class="log-body">
               <div class="log-title">{{ log.type }}</div>
@@ -86,18 +91,19 @@
               @if (log.notes) { <div class="log-note">{{ log.notes }}</div> }
             </div>
             <div class="log-cost">{{ eur(log.cost) }}</div>
-          </div>
+          </button>
         } @empty {
-          <app-empty-state icon="construct-outline" title="Sin mantenimientos" subtitle="Aún no hay registros." />
+          <app-empty-state icon="construct-outline" title="Sin mantenimientos" subtitle="Aún no hay registros."
+            actionLabel="Añadir" (action)="openMaintenanceForm()" />
         }
       }
 
       <!-- MODIFICACIONES -->
       @if (activeTab() === 'modificaciones') {
         @for (mod of modifications(); track mod.id) {
-          <div class="log-row">
+          <button type="button" class="log-row" (click)="openModificationForm(mod)">
             <div class="log-icon purple">
-              <ion-icon name="sparkles-outline" />
+              <ion-icon [name]="mod.icon ?? DEFAULT_MODIFICATION_ICON" />
             </div>
             <div class="log-body">
               <div class="log-title">{{ mod.partName }}</div>
@@ -106,18 +112,19 @@
               <div class="log-meta muted">{{ fmtMonth(mod.createdAt) }}</div>
             </div>
             <div class="log-cost">{{ eur(mod.cost) }}</div>
-          </div>
+          </button>
         } @empty {
-          <app-empty-state icon="sparkles-outline" title="Sin modificaciones" subtitle="Registra upgrades y tuning." />
+          <app-empty-state icon="sparkles-outline" title="Sin modificaciones" subtitle="Registra upgrades y tuning."
+            actionLabel="Añadir" (action)="openModificationForm()" />
         }
       }
 
       <!-- REPARACIONES -->
       @if (activeTab() === 'reparaciones') {
         @for (rep of repairs(); track rep.id) {
-          <div class="log-row">
+          <button type="button" class="log-row" (click)="openRepairForm(rep)">
             <div class="log-icon" [class.green]="rep.isInsuranceClaim" [class.orange]="!rep.isInsuranceClaim">
-              <ion-icon [name]="rep.isInsuranceClaim ? 'shield-checkmark-outline' : 'hammer-outline'" />
+              <ion-icon [name]="repairIcon(rep)" />
             </div>
             <div class="log-body">
               <div class="log-title">{{ rep.description }}</div>
@@ -130,9 +137,10 @@
               @if (rep.notes) { <div class="log-note">{{ rep.notes }}</div> }
             </div>
             <div class="log-cost">{{ eur(rep.cost) }}</div>
-          </div>
+          </button>
         } @empty {
-          <app-empty-state icon="hammer-outline" title="Sin reparaciones" subtitle="Registra daños y reparaciones." />
+          <app-empty-state icon="hammer-outline" title="Sin reparaciones" subtitle="Registra daños y reparaciones."
+            actionLabel="Añadir" (action)="openRepairForm()" />
         }
       }
 

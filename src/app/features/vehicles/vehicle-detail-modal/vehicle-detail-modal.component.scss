@@ -96,8 +96,35 @@
   gap: 10px;
 }
 
+// ── Add button ────────────────────────────────────────────────
+.add-item-btn {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 9px 16px;
+  margin-bottom: 2px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 999px;
+  color: var(--lg-text);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s ease, transform 0.15s ease;
+
+  ion-icon { font-size: 16px; }
+
+  &:active { transform: scale(0.96); background: rgba(255,255,255,0.14); }
+}
+
 // ── Log row ───────────────────────────────────────────────────
 .log-row {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -105,6 +132,9 @@
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
+  transition: background 0.15s ease, transform 0.15s ease;
+
+  &:active { transform: scale(0.98); background: rgba(255,255,255,0.09); }
 }
 
 .log-icon {

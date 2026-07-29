@@ -9,4 +9,5 @@ export interface RepairLog {
   isInsuranceClaim: boolean;
   notes: string;
   createdAt: Date;
+  icon?: string;
 }

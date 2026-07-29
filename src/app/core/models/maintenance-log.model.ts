@@ -29,4 +29,5 @@ export interface MaintenanceLog {
   cost: number;
   notes: string;
   attachmentURLs: string[];
+  icon?: string;
 }

@@ -1,0 +1,81 @@
+<ion-header class="ion-no-border modal-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only" />
+      </ion-button>
+    </ion-buttons>
+    <div class="modal-title">{{ isEdit() ? 'Editar reparación' : 'Nueva reparación' }}</div>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="save()" [disabled]="loading()">
+        @if (loading()) { <ion-spinner name="crescent" /> }
+        @else { <strong>Guardar</strong> }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="page-content">
+
+    <div class="form-group">
+      <label>Icono</label>
+      <app-icon-picker [value]="icon()" (valueChange)="onIconChange($event)" />
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <ion-input placeholder="Rayada puerta, choque frontal…"
+        [ngModel]="description()" (ngModelChange)="description.set($event)" />
+    </div>
+
+    <div class="form-group">
+      <label>Taller</label>
+      <ion-input placeholder="Nombre del taller"
+        [ngModel]="workshop()" (ngModelChange)="workshop.set($event)" />
+    </div>
+
+    <div class="row-fields">
+      <div class="form-group">
+        <label>Fecha</label>
+        <ion-input type="date"
+          [ngModel]="date()" (ngModelChange)="date.set($event)" />
+      </div>
+      <div class="form-group">
+        <label>Km</label>
+        <ion-input type="number" placeholder="0"
+          [ngModel]="mileage()" (ngModelChange)="mileage.set(+$event)" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Coste (€)</label>
+      <ion-input type="number" placeholder="0"
+        [ngModel]="cost()" (ngModelChange)="cost.set(+$event)" />
+    </div>
+
+    <div class="form-group toggle-row">
+      <label>Tramitado con seguro</label>
+      <ion-toggle
+        [ngModel]="isInsuranceClaim()" (ngModelChange)="onInsuranceChange($event)" />
+    </div>
+
+    <div class="form-group">
+      <label>Notas</label>
+      <ion-textarea placeholder="Detalles adicionales…" autoGrow
+        [ngModel]="notes()" (ngModelChange)="notes.set($event)" />
+    </div>
+
+    @if (error()) {
+      <div class="error-banner">
+        <ion-icon name="alert-circle-outline" />
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <ion-button expand="block" (click)="save()" [disabled]="loading()">
+      @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
+      {{ isEdit() ? 'Actualizar' : 'Añadir' }}
+    </ion-button>
+  </div>
+</ion-content>

@@ -1,0 +1,31 @@
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.icon-opt {
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--lg-r-md);
+  background: var(--lg-bg);
+  border: 1px solid var(--lg-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--lg-dur-fast) var(--lg-ease-out),
+              border-color var(--lg-dur-fast) var(--lg-ease-out),
+              transform var(--lg-dur-fast) var(--lg-ease-out);
+
+  ion-icon { font-size: 20px; color: var(--lg-text-2); }
+
+  &:active { transform: scale(0.94); }
+
+  &.selected {
+    background: var(--lg-gradient-primary);
+    border-color: var(--lg-border-glow);
+    box-shadow: var(--lg-glow-blue);
+    ion-icon { color: #fff; }
+  }
+}

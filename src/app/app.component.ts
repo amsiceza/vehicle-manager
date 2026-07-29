@@ -14,6 +14,12 @@ import {
   flashOutline, radioButtonOffOutline, thermometerOutline,
   hammerOutline, sunnyOutline, moonOutline, discOutline,
   waterOutline, waterSharp,
+  buildOutline, cogOutline, keyOutline, bicycleOutline,
+  colorPaletteOutline, musicalNotesOutline, bluetoothOutline,
+  snowOutline, rainyOutline, thunderstormOutline,
+  receiptOutline, cardOutline, walletOutline, warningOutline,
+  shieldOutline, bulbOutline, diamondOutline, trophyOutline,
+  ribbonOutline, rocketOutline,
 } from 'ionicons/icons';
 import { ThemeService } from './core/services/theme.service';
 
@@ -40,6 +46,12 @@ export class AppComponent implements OnInit {
       flashOutline, radioButtonOffOutline, thermometerOutline,
       hammerOutline, sunnyOutline, moonOutline, discOutline,
       waterOutline,
+      buildOutline, cogOutline, keyOutline, bicycleOutline,
+      colorPaletteOutline, musicalNotesOutline, bluetoothOutline,
+      snowOutline, rainyOutline, thunderstormOutline,
+      receiptOutline, cardOutline, walletOutline, warningOutline,
+      shieldOutline, bulbOutline, diamondOutline, trophyOutline,
+      ribbonOutline, rocketOutline,
       // Aliases for maintenance icons
       'water': waterSharp,
       'disc': discOutline,
