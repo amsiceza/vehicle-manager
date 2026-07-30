@@ -2,19 +2,20 @@ import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle,
   IonFab, IonFabButton, IonIcon, IonCard, IonCardContent,
-  ModalController,
+  ModalController, AlertController, ToastController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../core/services/firestore.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DemoService } from '../../../core/services/demo.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { CheckProLimitUseCase } from '../../../domain/use-cases/check-pro-limit.use-case';
-import { Vehicle } from '../../../core/models/vehicle.model';
+import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model';
 import { User } from '../../../core/models/user.model';
 import { VehicleDetailModalComponent } from '../vehicle-detail-modal/vehicle-detail-modal.component';
 import { PaywallComponent } from '../../../shared/components/paywall/paywall.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { SwipeableCardComponent } from '../../../shared/components/swipeable-card/swipeable-card.component';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -23,7 +24,7 @@ import { LoadingComponent } from '../../../shared/components/loading/loading.com
   imports: [
     IonContent, IonHeader, IonToolbar, IonTitle,
     IonFab, IonFabButton, IonIcon, IonCard, IonCardContent,
-    PaywallComponent, EmptyStateComponent, LoadingComponent,
+    PaywallComponent, EmptyStateComponent, LoadingComponent, SwipeableCardComponent,
   ],
   templateUrl: './vehicle-list.page.html',
   styleUrls: ['./vehicle-list.page.scss'],
@@ -34,6 +35,8 @@ export class VehicleListPage implements OnInit {
   private readonly demo = inject(DemoService);
   private readonly limitUseCase = inject(CheckProLimitUseCase);
   private readonly modalCtrl = inject(ModalController);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly toastCtrl = inject(ToastController);
 
   readonly theme = inject(ThemeService);
   readonly vehicles = signal<Vehicle[]>([]);
@@ -84,5 +87,31 @@ export class VehicleListPage implements OnInit {
   handleAdd(): void {
     if (this.canAdd()) { /* TODO: add form */ }
     else { this.showPaywall.set(true); }
+  }
+
+  async confirmDelete(vehicle: Vehicle): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header: 'Eliminar vehículo',
+      message: `¿Seguro que quieres eliminar ${vehicleDisplayName(vehicle)}? Esta acción no se puede deshacer.`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Eliminar', role: 'destructive', handler: () => this.deleteVehicle(vehicle) },
+      ],
+    });
+    await alert.present();
+  }
+
+  async openOptionsMenu(): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: 'Menú de opciones próximamente',
+      duration: 1500,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
+
+  private async deleteVehicle(vehicle: Vehicle): Promise<void> {
+    await this.fs.deleteVehicle(vehicle.id);
+    this.vehicles.update(list => list.filter(v => v.id !== vehicle.id));
   }
 }
