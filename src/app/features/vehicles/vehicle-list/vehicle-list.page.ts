@@ -12,6 +12,7 @@ import { CheckProLimitUseCase } from '../../../domain/use-cases/check-pro-limit.
 import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model';
 import { User } from '../../../core/models/user.model';
 import { VehicleDetailModalComponent } from '../vehicle-detail-modal/vehicle-detail-modal.component';
+import { VehicleFormModalComponent } from '../vehicle-form-modal/vehicle-form-modal.component';
 import { PaywallComponent } from '../../../shared/components/paywall/paywall.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
@@ -85,8 +86,17 @@ export class VehicleListPage implements OnInit {
   }
 
   handleAdd(): void {
-    if (this.canAdd()) { /* TODO: add form */ }
+    if (this.canAdd()) { void this.openVehicleForm(); }
     else { this.showPaywall.set(true); }
+  }
+
+  private async openVehicleForm(): Promise<void> {
+    const modal = await this.modalCtrl.create({ component: VehicleFormModalComponent });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss<Vehicle>();
+    if (role === 'save' && data) {
+      this.vehicles.update(list => [data, ...list]);
+    }
   }
 
   async confirmDelete(vehicle: Vehicle): Promise<void> {
