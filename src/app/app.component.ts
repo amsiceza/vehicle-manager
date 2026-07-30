@@ -4,7 +4,7 @@ import { addIcons } from 'ionicons';
 import {
   carOutline, carSportOutline, constructOutline, sparklesOutline,
   notificationsOutline, personCircleOutline, addOutline, trashOutline,
-  checkmarkCircleOutline, alertCircleOutline, informationCircleOutline,
+  checkmarkCircleOutline, checkmarkOutline, alertCircleOutline, informationCircleOutline,
   chevronForwardOutline, chevronBackOutline, closeOutline, createOutline,
   documentTextOutline, cameraOutline, imageOutline, lockClosedOutline,
   mailOutline, starOutline, star, cloudUploadOutline, speedometerOutline,
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     addIcons({
       carOutline, carSportOutline, constructOutline, sparklesOutline,
       notificationsOutline, personCircleOutline, addOutline, trashOutline,
-      checkmarkCircleOutline, alertCircleOutline, informationCircleOutline,
+      checkmarkCircleOutline, checkmarkOutline, alertCircleOutline, informationCircleOutline,
       chevronForwardOutline, chevronBackOutline, closeOutline, createOutline,
       documentTextOutline, cameraOutline, imageOutline, lockClosedOutline,
       mailOutline, starOutline, star, cloudUploadOutline, speedometerOutline,

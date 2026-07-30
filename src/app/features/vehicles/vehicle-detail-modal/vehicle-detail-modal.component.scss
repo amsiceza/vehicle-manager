@@ -40,11 +40,145 @@
     background: linear-gradient(to bottom, transparent 30%, rgba(7,7,14,0.9) 100%);
   }
 
+  .edit-photo-btn {
+    appearance: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    transition: transform 0.15s ease, background 0.15s ease;
+
+    ion-icon, ion-spinner { font-size: 16px; }
+
+    &:active { transform: scale(0.92); background: rgba(0,0,0,0.6); }
+    &:disabled { opacity: 0.7; }
+  }
+
   .hero-info {
-    position: absolute; bottom: 14px; left: 16px;
-    h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.035em; margin-bottom: 3px; }
+    position: absolute; bottom: 14px; left: 16px; right: 16px;
+    h2 {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 22px; font-weight: 800; letter-spacing: -0.035em; margin: 0 0 3px;
+
+      .name-text {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
     p  { font-size: 13px; color: rgba(255,255,255,0.65); margin: 0; }
   }
+}
+
+.name-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.name-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.name-input {
+  --background: rgba(255,255,255,0.12);
+  --color: #fff;
+  --placeholder-color: rgba(255,255,255,0.5);
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.name-counter {
+  align-self: flex-end;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  transition: color 0.15s ease;
+
+  &.limit-reached {
+    color: #FF9F0A;
+    font-weight: 700;
+  }
+}
+
+.name-cancel-btn, .name-save-btn {
+  appearance: none;
+  flex: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  line-height: 1;
+  transition: transform 0.15s ease, background 0.15s ease;
+
+  ion-icon { font-size: 14px; pointer-events: none; }
+
+  &:active { transform: scale(0.9); }
+}
+
+.name-cancel-btn {
+  background: rgba(255,255,255,0.12);
+  ion-icon { color: rgba(255,255,255,0.85); }
+  &:active { background: rgba(255,255,255,0.2); }
+}
+
+.name-save-btn {
+  background: rgba(52,199,89,0.25);
+  border-color: rgba(52,199,89,0.4);
+  ion-icon { color: #34C759; }
+  &:active { background: rgba(52,199,89,0.35); }
+}
+
+.edit-name-btn {
+  appearance: none;
+  flex: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.2);
+  line-height: 1;
+  transition: transform 0.15s ease, background 0.15s ease;
+
+  ion-icon {
+    font-size: 12px;
+    color: rgba(255,255,255,0.9);
+    pointer-events: none;
+  }
+
+  &:active { transform: scale(0.9); background: rgba(255,255,255,0.24); }
 }
 
 // ── Cost strip ────────────────────────────────────────────────

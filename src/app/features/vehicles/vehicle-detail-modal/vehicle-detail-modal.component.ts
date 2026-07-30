@@ -1,10 +1,12 @@
 import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
 import {
   IonContent, IonHeader, IonToolbar, IonButtons, IonButton,
-  IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner,
+  IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner, IonInput,
   ModalController, AlertController, ToastController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../core/services/firestore.service';
+import { StorageService } from '../../../core/services/storage.service';
+import { DemoService } from '../../../core/services/demo.service';
 import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model';
 import { MaintenanceLog, MAINTENANCE_ICONS } from '../../../core/models/maintenance-log.model';
 import { ModificationLog, DEFAULT_MODIFICATION_ICON } from '../../../core/models/modification-log.model';
@@ -24,7 +26,7 @@ type Tab = 'mantenimiento' | 'modificaciones' | 'reparaciones';
   host: { class: 'ion-page' },
   imports: [
     IonContent, IonHeader, IonToolbar, IonButtons, IonButton,
-    IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner,
+    IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner, IonInput,
     EmptyStateComponent, LoadingComponent, SwipeableCardComponent,
   ],
   templateUrl: './vehicle-detail-modal.component.html',
@@ -34,11 +36,14 @@ export class VehicleDetailModalComponent implements OnInit {
   @Input() vehicle!: Vehicle;
 
   private readonly fs = inject(FirestoreService);
+  private readonly storage = inject(StorageService);
+  private readonly demo = inject(DemoService);
   private readonly modalCtrl = inject(ModalController);
   private readonly alertCtrl = inject(AlertController);
   private readonly toastCtrl = inject(ToastController);
 
   readonly loading = signal(true);
+  readonly uploadingPhoto = signal(false);
   readonly activeTab = signal<Tab>('mantenimiento');
   readonly maintenanceLogs = signal<MaintenanceLog[]>([]);
   readonly modifications = signal<ModificationLog[]>([]);
@@ -46,7 +51,8 @@ export class VehicleDetailModalComponent implements OnInit {
 
   readonly MAINTENANCE_ICONS = MAINTENANCE_ICONS;
   readonly DEFAULT_MODIFICATION_ICON = DEFAULT_MODIFICATION_ICON;
-  readonly displayName = computed(() => vehicleDisplayName(this.vehicle));
+
+  displayName(): string { return vehicleDisplayName(this.vehicle); }
 
   readonly totalMaintCost  = computed(() => this.maintenanceLogs().reduce((s, l) => s + l.cost, 0));
   readonly totalModCost    = computed(() => this.modifications().reduce((s, l) => s + l.cost, 0));
@@ -65,6 +71,87 @@ export class VehicleDetailModalComponent implements OnInit {
   }
 
   dismiss(): void { this.modalCtrl.dismiss(); }
+
+  async onPhotoSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    this.uploadingPhoto.set(true);
+    try {
+      const url = this.demo.active()
+        ? URL.createObjectURL(file)
+        : await this.storage.uploadImage(file, `vehicles/${this.vehicle.id}/photo-${Date.now()}.jpg`);
+      this.vehicle.photoURLs = [url, ...this.vehicle.photoURLs.slice(1)];
+      await this.fs.updateVehicle({ id: this.vehicle.id, photoURLs: this.vehicle.photoURLs });
+    } catch {
+      const toast = await this.toastCtrl.create({ message: 'Error al subir la foto.', duration: 1500, position: 'bottom' });
+      await toast.present();
+    } finally {
+      this.uploadingPhoto.set(false);
+    }
+  }
+
+  private static readonly MAX_NAME_LENGTH = 40;
+
+  readonly editingName = signal(false);
+  readonly brandDraft = signal('');
+  readonly modelDraft = signal('');
+  readonly nameLimitReached = signal(false);
+  readonly nameCharsUsed = computed(() => `${this.brandDraft()} ${this.modelDraft()}`.trim().length);
+  readonly nameCharsLimit = VehicleDetailModalComponent.MAX_NAME_LENGTH;
+
+  startEditName(): void {
+    this.brandDraft.set(this.vehicle.brand);
+    this.modelDraft.set(this.vehicle.model);
+    this.nameLimitReached.set(false);
+    this.editingName.set(true);
+  }
+
+  cancelEditName(): void {
+    this.editingName.set(false);
+  }
+
+  onBrandDraftChange(value: string): void {
+    this.brandDraft.set(this.clampToSharedBudget(value, this.modelDraft()));
+  }
+
+  onModelDraftChange(value: string): void {
+    this.modelDraft.set(this.clampToSharedBudget(value, this.brandDraft()));
+  }
+
+  private clampToSharedBudget(changed: string, other: string): string {
+    // The 40-char limit is shared between brand + model (joined by a space).
+    const budget = Math.max(0, VehicleDetailModalComponent.MAX_NAME_LENGTH - other.length - 1);
+    const exceeded = changed.length > budget;
+    if (exceeded && !this.nameLimitReached()) {
+      void this.warnNameLimitReached();
+    }
+    this.nameLimitReached.set(exceeded);
+    return changed.slice(0, budget);
+  }
+
+  private async warnNameLimitReached(): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: `Has alcanzado el límite de ${VehicleDetailModalComponent.MAX_NAME_LENGTH} caracteres.`,
+      duration: 1600,
+      position: 'bottom',
+      color: 'warning',
+    });
+    await toast.present();
+  }
+
+  async saveEditName(): Promise<void> {
+    const brand = this.brandDraft().trim();
+    const model = this.modelDraft().trim();
+    if (!brand || !model) return;
+
+    this.vehicle.brand = brand;
+    this.vehicle.model = model;
+    this.editingName.set(false);
+    await this.fs.updateVehicle({ id: this.vehicle.id, brand, model });
+  }
 
   repairIcon(rep: RepairLog): string {
     return rep.icon ?? (rep.isInsuranceClaim ? 'shield-checkmark-outline' : 'hammer-outline');
