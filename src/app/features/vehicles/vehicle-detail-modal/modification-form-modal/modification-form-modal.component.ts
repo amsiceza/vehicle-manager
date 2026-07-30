@@ -1,9 +1,8 @@
-import { Component, Input, OnInit, signal, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonContent,
   IonInput, IonTextarea, IonSelect, IonSelectOption, IonSpinner,
-  ModalController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../../core/services/firestore.service';
 import { ModificationLog, MODIFICATION_CATEGORIES, DEFAULT_MODIFICATION_ICON } from '../../../../core/models/modification-log.model';
@@ -26,8 +25,10 @@ export class ModificationFormModalComponent implements OnInit {
   @Input() vehicleId!: string;
   @Input() mod?: ModificationLog;
 
+  @Output() back = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<ModificationLog>();
+
   private readonly fs = inject(FirestoreService);
-  private readonly modalCtrl = inject(ModalController);
 
   readonly categories = MODIFICATION_CATEGORIES;
   readonly isEdit = signal(false);
@@ -62,7 +63,7 @@ export class ModificationFormModalComponent implements OnInit {
     this.iconTouched = true;
   }
 
-  dismiss(): void { this.modalCtrl.dismiss(); }
+  goBack(): void { this.back.emit(); }
 
   async save(): Promise<void> {
     if (!this.partName().trim() || !this.brand().trim() || this.cost() < 0) {
@@ -90,7 +91,7 @@ export class ModificationFormModalComponent implements OnInit {
       } else {
         await this.fs.saveModification(built);
       }
-      await this.modalCtrl.dismiss(built, 'save');
+      this.saved.emit(built);
     } catch {
       this.error.set('Error al guardar la modificación.');
     } finally {

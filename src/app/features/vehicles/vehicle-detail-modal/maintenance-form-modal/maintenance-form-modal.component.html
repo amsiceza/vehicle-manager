@@ -1,8 +1,8 @@
 <ion-header class="ion-no-border modal-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button fill="clear" (click)="dismiss()">
-        <ion-icon name="close-outline" slot="icon-only" />
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon name="chevron-back-outline" slot="icon-only" />
       </ion-button>
     </ion-buttons>
     <div class="modal-title">{{ isEdit() ? 'Editar mantenimiento' : 'Nuevo mantenimiento' }}</div>

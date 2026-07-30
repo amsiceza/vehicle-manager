@@ -1,85 +1,137 @@
 <ion-header class="ion-no-border modal-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button fill="clear" (click)="dismiss()">
-        <ion-icon name="chevron-back-outline" slot="icon-only" />
-      </ion-button>
+      <ion-back-button defaultHref="/app/vehicles" text="" />
     </ion-buttons>
-    <div class="modal-title">{{ vehicle.licensePlate }}</div>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="dismiss()">
-        <ion-icon name="close-outline" slot="icon-only" />
-      </ion-button>
-    </ion-buttons>
+    <ion-title class="modal-title">{{ vehicle()?.licensePlate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="modal-content">
-
-  <!-- Hero photo -->
-  <div class="hero">
-    @if (vehicle.photoURLs[0]) {
-      <img [src]="vehicle.photoURLs[0]" [alt]="displayName()" class="hero-img" />
-    } @else {
-      <div class="hero-placeholder">
-        <ion-icon name="car-sport-outline" />
-      </div>
-    }
-    <div class="hero-gradient"></div>
-    <div class="hero-info">
-      <h2>{{ displayName() }}</h2>
-      <p>{{ vehicle.currentMileage.toLocaleString('es-ES') }} km · {{ vehicle.year }}</p>
-    </div>
-  </div>
-
-  <!-- Cost strip -->
-  <div class="cost-strip">
-    <div class="cost-item">
-      <div class="cost-value">{{ eur(totalMaintCost()) }}</div>
-      <div class="cost-label">Mantenimiento</div>
-    </div>
-    <div class="cost-sep"></div>
-    <div class="cost-item">
-      <div class="cost-value">{{ eur(totalModCost()) }}</div>
-      <div class="cost-label">Modificaciones</div>
-    </div>
-    <div class="cost-sep"></div>
-    <div class="cost-item">
-      <div class="cost-value">{{ eur(totalRepairCost()) }}</div>
-      <div class="cost-label">Reparaciones</div>
-    </div>
-  </div>
-
-  <!-- Segment -->
-  <div class="segment-wrap">
-    <ion-segment [value]="activeTab()" (ionChange)="activeTab.set($any($event.detail.value))">
-      <ion-segment-button value="mantenimiento">
-        <ion-icon name="construct-outline" />
-        <ion-label>Mant.</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="modificaciones">
-        <ion-icon name="sparkles-outline" />
-        <ion-label>Mods.</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="reparaciones">
-        <ion-icon name="hammer-outline" />
-        <ion-label>Reparac.</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </div>
-
   @if (loading()) {
-    <app-loading message="Cargando historial…" />
+    <app-loading message="Cargando vehículo…" />
   } @else {
-    <div class="tab-content">
+    @if (vehicle(); as v) {
 
-      <button type="button" class="add-item-btn" (click)="addCurrentTabItem()">
-        <ion-icon name="add-outline" />
-        Añadir
-      </button>
+      <div class="detail-grid">
 
-      <!-- MANTENIMIENTOS -->
-      @if (activeTab() === 'mantenimiento') {
+        <div class="detail-left">
+          <!-- Hero photo -->
+          <div class="hero">
+            @if (v.photoURLs[0]) {
+              <img [src]="v.photoURLs[0]" [alt]="displayName()" class="hero-img" />
+            } @else {
+              <div class="hero-placeholder">
+                <ion-icon name="car-sport-outline" />
+              </div>
+            }
+            <div class="hero-gradient"></div>
+            <div class="hero-info">
+              <h2>{{ displayName() }}</h2>
+              <p>{{ v.currentMileage.toLocaleString('es-ES') }} km · {{ v.year }}</p>
+            </div>
+          </div>
+
+          <!-- Cost strip -->
+          <div class="cost-strip">
+            <div class="cost-item">
+              <div class="cost-value">{{ eur(totalMaintCost()) }}</div>
+              <div class="cost-label">Mantenimiento</div>
+            </div>
+            <div class="cost-sep"></div>
+            <div class="cost-item">
+              <div class="cost-value">{{ eur(totalModCost()) }}</div>
+              <div class="cost-label">Modificaciones</div>
+            </div>
+            <div class="cost-sep"></div>
+            <div class="cost-item">
+              <div class="cost-value">{{ eur(totalRepairCost()) }}</div>
+              <div class="cost-label">Reparaciones</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-right">
+
+          <!-- MOBILE / TABLET: segment + single active tab -->
+          <div class="mobile-tabs">
+            <div class="segment-wrap">
+              <ion-segment [value]="activeTab()" (ionChange)="activeTab.set($any($event.detail.value))">
+                <ion-segment-button value="mantenimiento">
+                  <ion-icon name="construct-outline" />
+                  <ion-label>Mant.</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="modificaciones">
+                  <ion-icon name="sparkles-outline" />
+                  <ion-label>Mods.</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="reparaciones">
+                  <ion-icon name="hammer-outline" />
+                  <ion-label>Reparac.</ion-label>
+                </ion-segment-button>
+              </ion-segment>
+            </div>
+
+            <div class="tab-content">
+              <button type="button" class="add-item-btn" (click)="addCurrentTabItem()">
+                <ion-icon name="add-outline" />
+                Añadir
+              </button>
+
+              @if (activeTab() === 'mantenimiento') {
+                <ng-container *ngTemplateOutlet="mantList" />
+              }
+              @if (activeTab() === 'modificaciones') {
+                <ng-container *ngTemplateOutlet="modsList" />
+              }
+              @if (activeTab() === 'reparaciones') {
+                <ng-container *ngTemplateOutlet="reparacList" />
+              }
+            </div>
+          </div>
+
+          <!-- DESKTOP: horizontal tabs, single active section (no fold/collapse) -->
+          <div class="desktop-tabs">
+            <div class="tab-row">
+              <button type="button" class="tab-pill" [class.active]="activeTab() === 'mantenimiento'"
+                (click)="activeTab.set('mantenimiento')">
+                <ion-icon name="construct-outline" />
+                <span>Mant.</span>
+              </button>
+              <button type="button" class="tab-pill" [class.active]="activeTab() === 'modificaciones'"
+                (click)="activeTab.set('modificaciones')">
+                <ion-icon name="sparkles-outline" />
+                <span>Mods.</span>
+              </button>
+              <button type="button" class="tab-pill" [class.active]="activeTab() === 'reparaciones'"
+                (click)="activeTab.set('reparaciones')">
+                <ion-icon name="hammer-outline" />
+                <span>Reparac.</span>
+              </button>
+            </div>
+
+            <div class="tab-panel">
+              <button type="button" class="add-item-btn" (click)="addCurrentTabItem()">
+                <ion-icon name="add-outline" />
+                Añadir
+              </button>
+
+              @if (activeTab() === 'mantenimiento') {
+                <ng-container *ngTemplateOutlet="mantList" />
+              }
+              @if (activeTab() === 'modificaciones') {
+                <ng-container *ngTemplateOutlet="modsList" />
+              }
+              @if (activeTab() === 'reparaciones') {
+                <ng-container *ngTemplateOutlet="reparacList" />
+              }
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <ng-template #mantList>
         @for (log of maintenanceLogs(); track log.id) {
           <app-swipeable-card [radius]="16" (delete)="confirmDeleteMaintenance(log)" (more)="openOptionsMenu()">
             <button type="button" class="log-row" (click)="openMaintenanceForm(log)">
@@ -98,10 +150,9 @@
           <app-empty-state icon="construct-outline" title="Sin mantenimientos" subtitle="Aún no hay registros."
             actionLabel="Añadir" (action)="openMaintenanceForm()" />
         }
-      }
+      </ng-template>
 
-      <!-- MODIFICACIONES -->
-      @if (activeTab() === 'modificaciones') {
+      <ng-template #modsList>
         @for (mod of modifications(); track mod.id) {
           <app-swipeable-card [radius]="16" (delete)="confirmDeleteModification(mod)" (more)="openOptionsMenu()">
             <button type="button" class="log-row" (click)="openModificationForm(mod)">
@@ -121,10 +172,9 @@
           <app-empty-state icon="sparkles-outline" title="Sin modificaciones" subtitle="Registra upgrades y tuning."
             actionLabel="Añadir" (action)="openModificationForm()" />
         }
-      }
+      </ng-template>
 
-      <!-- REPARACIONES -->
-      @if (activeTab() === 'reparaciones') {
+      <ng-template #reparacList>
         @for (rep of repairs(); track rep.id) {
           <app-swipeable-card [radius]="16" (delete)="confirmDeleteRepair(rep)" (more)="openOptionsMenu()">
             <button type="button" class="log-row" (click)="openRepairForm(rep)">
@@ -148,9 +198,29 @@
           <app-empty-state icon="hammer-outline" title="Sin reparaciones" subtitle="Registra daños y reparaciones."
             actionLabel="Añadir" (action)="openRepairForm()" />
         }
-      }
+      </ng-template>
 
-    </div>
+    } @else {
+      <app-empty-state icon="alert-circle-outline" title="Vehículo no encontrado"
+        subtitle="Puede que haya sido eliminado." />
+    }
   }
-
 </ion-content>
+
+@if (vehicle(); as v) {
+  @if (formView() === 'mantenimiento') {
+    <app-maintenance-form-modal
+      [vehicleId]="v.id" [log]="editingMaintenance()"
+      (back)="closeForm()" (saved)="onMaintenanceSaved($event)" />
+  }
+  @if (formView() === 'modificaciones') {
+    <app-modification-form-modal
+      [vehicleId]="v.id" [mod]="editingModification()"
+      (back)="closeForm()" (saved)="onModificationSaved($event)" />
+  }
+  @if (formView() === 'reparaciones') {
+    <app-repair-form-modal
+      [vehicleId]="v.id" [repair]="editingRepair()"
+      (back)="closeForm()" (saved)="onRepairSaved($event)" />
+  }
+}

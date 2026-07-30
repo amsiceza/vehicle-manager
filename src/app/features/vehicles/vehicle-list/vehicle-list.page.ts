@@ -1,8 +1,9 @@
 import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle,
   IonFab, IonFabButton, IonIcon, IonCard, IonCardContent,
-  ModalController, AlertController, ToastController,
+  AlertController, ToastController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../core/services/firestore.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -11,7 +12,6 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { CheckProLimitUseCase } from '../../../domain/use-cases/check-pro-limit.use-case';
 import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model';
 import { User } from '../../../core/models/user.model';
-import { VehicleDetailModalComponent } from '../vehicle-detail-modal/vehicle-detail-modal.component';
 import { PaywallComponent } from '../../../shared/components/paywall/paywall.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
@@ -34,7 +34,7 @@ export class VehicleListPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly demo = inject(DemoService);
   private readonly limitUseCase = inject(CheckProLimitUseCase);
-  private readonly modalCtrl = inject(ModalController);
+  private readonly router = inject(Router);
   private readonly alertCtrl = inject(AlertController);
   private readonly toastCtrl = inject(ToastController);
 
@@ -75,13 +75,8 @@ export class VehicleListPage implements OnInit {
     }
   }
 
-  async openDetail(vehicle: Vehicle): Promise<void> {
-    const modal = await this.modalCtrl.create({
-      component: VehicleDetailModalComponent,
-      componentProps: { vehicle },
-      // Full-screen, static, scrollable — no drag handle
-    });
-    await modal.present();
+  openDetail(vehicle: Vehicle): void {
+    this.router.navigate(['/vehicles', vehicle.id]);
   }
 
   handleAdd(): void {

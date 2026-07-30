@@ -1,10 +1,13 @@
-import { Component, Input, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonContent, IonHeader, IonToolbar, IonButtons, IonButton,
+  IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonTitle,
   IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner,
-  ModalController, AlertController, ToastController,
+  AlertController, ToastController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../core/services/firestore.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model';
 import { MaintenanceLog, MAINTENANCE_ICONS } from '../../../core/models/maintenance-log.model';
 import { ModificationLog, DEFAULT_MODIFICATION_ICON } from '../../../core/models/modification-log.model';
@@ -23,48 +26,66 @@ type Tab = 'mantenimiento' | 'modificaciones' | 'reparaciones';
   standalone: true,
   host: { class: 'ion-page' },
   imports: [
-    IonContent, IonHeader, IonToolbar, IonButtons, IonButton,
+    NgTemplateOutlet,
+    IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonBackButton, IonTitle,
     IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner,
     EmptyStateComponent, LoadingComponent, SwipeableCardComponent,
+    MaintenanceFormModalComponent, ModificationFormModalComponent, RepairFormModalComponent,
   ],
   templateUrl: './vehicle-detail-modal.component.html',
   styleUrls: ['./vehicle-detail-modal.component.scss'],
 })
 export class VehicleDetailModalComponent implements OnInit {
-  @Input() vehicle!: Vehicle;
-
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly fs = inject(FirestoreService);
-  private readonly modalCtrl = inject(ModalController);
+  private readonly auth = inject(AuthService);
   private readonly alertCtrl = inject(AlertController);
   private readonly toastCtrl = inject(ToastController);
 
   readonly loading = signal(true);
+  readonly vehicle = signal<Vehicle | null>(null);
   readonly activeTab = signal<Tab>('mantenimiento');
   readonly maintenanceLogs = signal<MaintenanceLog[]>([]);
   readonly modifications = signal<ModificationLog[]>([]);
   readonly repairs = signal<RepairLog[]>([]);
 
+  readonly formView = signal<'none' | Tab>('none');
+  readonly editingMaintenance = signal<MaintenanceLog | undefined>(undefined);
+  readonly editingModification = signal<ModificationLog | undefined>(undefined);
+  readonly editingRepair = signal<RepairLog | undefined>(undefined);
+
   readonly MAINTENANCE_ICONS = MAINTENANCE_ICONS;
   readonly DEFAULT_MODIFICATION_ICON = DEFAULT_MODIFICATION_ICON;
-  readonly displayName = computed(() => vehicleDisplayName(this.vehicle));
+  readonly displayName = computed(() => {
+    const v = this.vehicle();
+    return v ? vehicleDisplayName(v) : '';
+  });
 
   readonly totalMaintCost  = computed(() => this.maintenanceLogs().reduce((s, l) => s + l.cost, 0));
   readonly totalModCost    = computed(() => this.modifications().reduce((s, l) => s + l.cost, 0));
   readonly totalRepairCost = computed(() => this.repairs().reduce((s, l) => s + l.cost, 0));
 
   async ngOnInit(): Promise<void> {
+    const id = this.route.snapshot.paramMap.get('id')!;
+    const uid = this.auth.currentUid();
+    if (!uid) { this.router.navigateByUrl('/auth/login'); return; }
+
+    const vehicles = await this.fs.fetchVehicles(uid);
+    const vehicle = vehicles.find(v => v.id === id) ?? null;
+    if (!vehicle) { this.loading.set(false); return; }
+    this.vehicle.set(vehicle);
+
     const [maint, mods, reps] = await Promise.all([
-      this.fs.fetchMaintenanceLogs(this.vehicle.id),
-      this.fs.fetchModifications(this.vehicle.id),
-      this.fs.fetchRepairLogs(this.vehicle.id),
+      this.fs.fetchMaintenanceLogs(id),
+      this.fs.fetchModifications(id),
+      this.fs.fetchRepairLogs(id),
     ]);
     this.maintenanceLogs.set(maint);
     this.modifications.set(mods);
     this.repairs.set(reps);
     this.loading.set(false);
   }
-
-  dismiss(): void { this.modalCtrl.dismiss(); }
 
   repairIcon(rep: RepairLog): string {
     return rep.icon ?? (rep.isInsuranceClaim ? 'shield-checkmark-outline' : 'hammer-outline');
@@ -78,52 +99,48 @@ export class VehicleDetailModalComponent implements OnInit {
     }
   }
 
-  async openMaintenanceForm(log?: MaintenanceLog): Promise<void> {
-    const modal = await this.modalCtrl.create({
-      component: MaintenanceFormModalComponent,
-      componentProps: { vehicleId: this.vehicle.id, log },
-    });
-    await modal.present();
-    const { data, role } = await modal.onWillDismiss<MaintenanceLog>();
-    if (role === 'save' && data) {
-      this.maintenanceLogs.update(list => {
-        const i = list.findIndex(l => l.id === data.id);
-        if (i >= 0) { const copy = [...list]; copy[i] = data; return copy; }
-        return [data, ...list];
-      });
-    }
+  openMaintenanceForm(log?: MaintenanceLog): void {
+    this.editingMaintenance.set(log);
+    this.formView.set('mantenimiento');
   }
 
-  async openModificationForm(mod?: ModificationLog): Promise<void> {
-    const modal = await this.modalCtrl.create({
-      component: ModificationFormModalComponent,
-      componentProps: { vehicleId: this.vehicle.id, mod },
-    });
-    await modal.present();
-    const { data, role } = await modal.onWillDismiss<ModificationLog>();
-    if (role === 'save' && data) {
-      this.modifications.update(list => {
-        const i = list.findIndex(m => m.id === data.id);
-        if (i >= 0) { const copy = [...list]; copy[i] = data; return copy; }
-        return [data, ...list];
-      });
-    }
+  openModificationForm(mod?: ModificationLog): void {
+    this.editingModification.set(mod);
+    this.formView.set('modificaciones');
   }
 
-  async openRepairForm(repair?: RepairLog): Promise<void> {
-    const modal = await this.modalCtrl.create({
-      component: RepairFormModalComponent,
-      componentProps: { vehicleId: this.vehicle.id, repair },
+  openRepairForm(repair?: RepairLog): void {
+    this.editingRepair.set(repair);
+    this.formView.set('reparaciones');
+  }
+
+  closeForm(): void { this.formView.set('none'); }
+
+  onMaintenanceSaved(data: MaintenanceLog): void {
+    this.maintenanceLogs.update(list => {
+      const i = list.findIndex(l => l.id === data.id);
+      if (i >= 0) { const copy = [...list]; copy[i] = data; return copy; }
+      return [data, ...list];
     });
-    await modal.present();
-    const { data, role } = await modal.onWillDismiss<RepairLog>();
-    if (role === 'save' && data) {
-      this.repairs.update(list => {
-        const i = list.findIndex(r => r.id === data.id);
-        if (i >= 0) { const copy = [...list]; copy[i] = data; return copy; }
-        return [data, ...list];
-      });
-    }
+    this.closeForm();
+  }
+
+  onModificationSaved(data: ModificationLog): void {
+    this.modifications.update(list => {
+      const i = list.findIndex(m => m.id === data.id);
+      if (i >= 0) { const copy = [...list]; copy[i] = data; return copy; }
+      return [data, ...list];
+    });
+    this.closeForm();
+  }
+
+  onRepairSaved(data: RepairLog): void {
+    this.repairs.update(list => {
+      const i = list.findIndex(r => r.id === data.id);
+      if (i >= 0) { const copy = [...list]; copy[i] = data; return copy; }
+      return [data, ...list];
+    });
+    this.closeForm();
   }
 
   async confirmDeleteMaintenance(log: MaintenanceLog): Promise<void> {

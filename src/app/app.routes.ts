@@ -45,7 +45,7 @@ export const routes: Routes = [
 
   {
     path: 'vehicles/:id',
-    loadComponent: () => import('./features/vehicles/vehicle-detail/vehicle-detail.page').then(m => m.VehicleDetailPage),
+    loadComponent: () => import('./features/vehicles/vehicle-detail-modal/vehicle-detail-modal.component').then(m => m.VehicleDetailModalComponent),
     canActivate: [authGuard],
   },
   {

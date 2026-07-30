@@ -5,12 +5,28 @@
   border-bottom: 1px solid rgba(255,255,255,0.10);
 }
 
+// True centering regardless of how wide the start/end toolbar buttons are
+// (ion-title's default flex-based centering only centers within the leftover
+// space, which looks off when only one side has content).
+.modal-header ion-toolbar { position: relative; }
+
 .modal-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0;
   font-size: 16px;
   font-weight: 700;
   color: var(--lg-text);
   letter-spacing: -0.01em;
   text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 // ── Content ───────────────────────────────────────────────────
@@ -62,6 +78,93 @@
 
 .cost-sep { width: 1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
 
+// ── Desktop split view ───────────────────────────────────────
+// Mobile-first: the two wrapping columns are transparent (no box, no reflow)
+// so hero/cost-strip/mobile-tabs simply stack in document order.
+.detail-left, .detail-right { display: contents; }
+
+.desktop-tabs { display: none; }
+
+// Desktop only: requires both a wide viewport AND a mouse/trackpad
+// (hover + fine pointer), so touch tablets (iPad included) — which report
+// wide viewports in landscape too — keep the mobile layout.
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  .modal-content { --overflow: hidden; }
+
+  // .inner-scroll (ion-content's shadow scroll host) is itself absolutely
+  // positioned and fills the content area; percentage heights on slotted
+  // children don't reliably resolve against it, so anchor directly instead.
+  .detail-grid {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .detail-left {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    overflow: hidden;
+
+    .hero { flex: 1; min-height: 0; aspect-ratio: unset; }
+    .cost-strip { flex-shrink: 0; }
+  }
+
+  .detail-right {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    overflow-y: auto;
+    border-left: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .mobile-tabs { display: none; }
+
+  .desktop-tabs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tab-row {
+    display: flex;
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .tab-pill {
+    appearance: none;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    ion-icon { font-size: 15px; }
+
+    &.active {
+      background: rgba(0, 122, 255, 0.16);
+      border-color: rgba(0, 122, 255, 0.4);
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .tab-panel {
+    padding: 0 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
 // ── Segment ───────────────────────────────────────────────────
 .segment-wrap {
   padding: 12px 14px 10px;
@@ -76,9 +179,9 @@
   }
 
   ion-segment-button {
-    --background-checked: rgba(255,255,255,0.14);
+    --background-checked: rgba(0, 122, 255, 0.16);
     --color: rgba(255,255,255,0.45);
-    --color-checked: rgba(255,255,255,0.95);
+    --color-checked: var(--ion-color-primary);
     --indicator-color: transparent;
     --border-radius: 999px;
     min-height: 36px;
@@ -162,4 +265,17 @@
   display: inline-flex; align-items: center; gap: 4px;
   margin-top: 4px; font-size: 11px; font-weight: 600; color: #34C759;
   ion-icon { font-size: 12px; }
+}
+
+// ── Sub-forms (mant./mods./reparac.) as a full new page, not a stacked modal ──
+app-maintenance-form-modal,
+app-modification-form-modal,
+app-repair-form-modal {
+  z-index: 20;
+  animation: subpage-in 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@keyframes subpage-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
 }
