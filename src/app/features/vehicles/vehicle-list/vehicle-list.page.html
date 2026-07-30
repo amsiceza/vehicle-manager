@@ -27,29 +27,31 @@
   } @else {
     <div class="grid">
       @for (v of vehicles(); track v.id) {
-        <button class="v-card" (click)="openDetail(v)">
-          <div class="v-photo">
-            @if (v.photoURLs[0]) {
-              <img [src]="v.photoURLs[0]" [alt]="v.brand" loading="lazy" />
-            } @else {
-              <div class="v-photo-placeholder">
-                <ion-icon name="car-sport-outline" />
-              </div>
-            }
-            <div class="v-gradient"></div>
-            <span class="v-year">{{ v.year }}</span>
-          </div>
-          <div class="v-info">
-            <div class="v-name">{{ v.brand }} {{ v.model }}</div>
-            <div class="v-meta">
-              <span>{{ v.licensePlate }}</span>
-              <span class="v-km">
-                <ion-icon name="speedometer-outline" />
-                {{ v.currentMileage.toLocaleString('es-ES') }}
-              </span>
+        <app-swipeable-card (delete)="confirmDelete(v)" (more)="openOptionsMenu()">
+          <button class="v-card" (click)="openDetail(v)">
+            <div class="v-photo">
+              @if (v.photoURLs[0]) {
+                <img [src]="v.photoURLs[0]" [alt]="v.brand" loading="lazy" />
+              } @else {
+                <div class="v-photo-placeholder">
+                  <ion-icon name="car-sport-outline" />
+                </div>
+              }
+              <div class="v-gradient"></div>
+              <span class="v-year">{{ v.year }}</span>
             </div>
-          </div>
-        </button>
+            <div class="v-info">
+              <div class="v-name">{{ v.brand }} {{ v.model }}</div>
+              <div class="v-meta">
+                <span>{{ v.licensePlate }}</span>
+                <span class="v-km">
+                  <ion-icon name="speedometer-outline" />
+                  {{ v.currentMileage.toLocaleString('es-ES') }}
+                </span>
+              </div>
+            </div>
+          </button>
+        </app-swipeable-card>
       }
     </div>
   }

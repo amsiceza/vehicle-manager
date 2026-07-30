@@ -19,7 +19,7 @@ import {
   snowOutline, rainyOutline, thunderstormOutline,
   receiptOutline, cardOutline, walletOutline, warningOutline,
   shieldOutline, bulbOutline, diamondOutline, trophyOutline,
-  ribbonOutline, rocketOutline,
+  ribbonOutline, rocketOutline, menuOutline,
 } from 'ionicons/icons';
 import { ThemeService } from './core/services/theme.service';
 
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
       snowOutline, rainyOutline, thunderstormOutline,
       receiptOutline, cardOutline, walletOutline, warningOutline,
       shieldOutline, bulbOutline, diamondOutline, trophyOutline,
-      ribbonOutline, rocketOutline,
+      ribbonOutline, rocketOutline, menuOutline,
       // Aliases for maintenance icons
       'water': waterSharp,
       'disc': discOutline,

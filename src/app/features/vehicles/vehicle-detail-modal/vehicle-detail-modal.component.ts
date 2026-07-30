@@ -2,7 +2,7 @@ import { Component, Input, OnInit, signal, inject, computed } from '@angular/cor
 import {
   IonContent, IonHeader, IonToolbar, IonButtons, IonButton,
   IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner,
-  ModalController,
+  ModalController, AlertController, ToastController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../core/services/firestore.service';
 import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model';
@@ -11,6 +11,7 @@ import { ModificationLog, DEFAULT_MODIFICATION_ICON } from '../../../core/models
 import { RepairLog } from '../../../core/models/repair-log.model';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
+import { SwipeableCardComponent } from '../../../shared/components/swipeable-card/swipeable-card.component';
 import { MaintenanceFormModalComponent } from './maintenance-form-modal/maintenance-form-modal.component';
 import { ModificationFormModalComponent } from './modification-form-modal/modification-form-modal.component';
 import { RepairFormModalComponent } from './repair-form-modal/repair-form-modal.component';
@@ -24,7 +25,7 @@ type Tab = 'mantenimiento' | 'modificaciones' | 'reparaciones';
   imports: [
     IonContent, IonHeader, IonToolbar, IonButtons, IonButton,
     IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner,
-    EmptyStateComponent, LoadingComponent,
+    EmptyStateComponent, LoadingComponent, SwipeableCardComponent,
   ],
   templateUrl: './vehicle-detail-modal.component.html',
   styleUrls: ['./vehicle-detail-modal.component.scss'],
@@ -34,6 +35,8 @@ export class VehicleDetailModalComponent implements OnInit {
 
   private readonly fs = inject(FirestoreService);
   private readonly modalCtrl = inject(ModalController);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly toastCtrl = inject(ToastController);
 
   readonly loading = signal(true);
   readonly activeTab = signal<Tab>('mantenimiento');
@@ -121,6 +124,60 @@ export class VehicleDetailModalComponent implements OnInit {
         return [data, ...list];
       });
     }
+  }
+
+  async confirmDeleteMaintenance(log: MaintenanceLog): Promise<void> {
+    await this.confirmAndDelete(
+      'Eliminar registro',
+      `¿Seguro que quieres eliminar "${log.type}"? Esta acción no se puede deshacer.`,
+      async () => {
+        await this.fs.deleteMaintenanceLog(log.id);
+        this.maintenanceLogs.update(list => list.filter(l => l.id !== log.id));
+      },
+    );
+  }
+
+  async confirmDeleteModification(mod: ModificationLog): Promise<void> {
+    await this.confirmAndDelete(
+      'Eliminar modificación',
+      `¿Seguro que quieres eliminar "${mod.partName}"? Esta acción no se puede deshacer.`,
+      async () => {
+        await this.fs.deleteModification(mod.id);
+        this.modifications.update(list => list.filter(m => m.id !== mod.id));
+      },
+    );
+  }
+
+  async confirmDeleteRepair(rep: RepairLog): Promise<void> {
+    await this.confirmAndDelete(
+      'Eliminar reparación',
+      `¿Seguro que quieres eliminar "${rep.description}"? Esta acción no se puede deshacer.`,
+      async () => {
+        await this.fs.deleteRepairLog(rep.id);
+        this.repairs.update(list => list.filter(r => r.id !== rep.id));
+      },
+    );
+  }
+
+  async openOptionsMenu(): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: 'Menú de opciones próximamente',
+      duration: 1500,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
+
+  private async confirmAndDelete(header: string, message: string, handler: () => Promise<void>): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header,
+      message,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Eliminar', role: 'destructive', handler },
+      ],
+    });
+    await alert.present();
   }
 
   eur(v: number): string {

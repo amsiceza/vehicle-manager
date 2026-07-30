@@ -1,0 +1,97 @@
+:host {
+  position: relative;
+  display: block;
+  width: 100%;
+  touch-action: pan-y;
+  border-radius: var(--radius, 18px);
+  overflow: visible;
+
+  @media (max-width: 599px) {
+    border-radius: var(--radius, 16px);
+  }
+
+  &.is-interactive {
+    overflow: hidden;
+  }
+}
+
+.swipe-content {
+  position: relative;
+  width: 100%;
+  transform: translateX(0);
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+
+  &.no-transition {
+    transition: none;
+  }
+}
+
+.swipe-overlay {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+
+.swipe-action {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--action-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+
+  &.is-visible {
+    visibility: visible;
+  }
+}
+
+.swipe-action--left {
+  left: 0;
+  border-radius: var(--radius, 18px) 0 0 var(--radius, 18px);
+  overflow: hidden;
+
+  @media (max-width: 599px) { border-radius: var(--radius, 16px) 0 0 var(--radius, 16px); }
+}
+
+.swipe-action--right {
+  right: 0;
+  border-radius: 0 var(--radius, 18px) var(--radius, 18px) 0;
+  overflow: hidden;
+
+  @media (max-width: 599px) { border-radius: 0 var(--radius, 16px) var(--radius, 16px) 0; }
+}
+
+.action-btn {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  ion-icon { font-size: 22px; }
+
+  &:active { opacity: 0.75; }
+}
+
+.action-btn--delete {
+  background: var(--ion-color-danger, #FF375F);
+  ion-icon { color: #fff; }
+}
+
+.action-btn--more {
+  background: rgba(120, 120, 128, 0.32);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  ion-icon { color: rgba(255, 255, 255, 0.92); }
+}
+
+:root.theme-light .action-btn--more {
+  background: rgba(120, 120, 128, 0.20);
+  ion-icon { color: rgba(0, 0, 0, 0.72); }
+}
