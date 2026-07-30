@@ -26,8 +26,43 @@
       </div>
     }
     <div class="hero-gradient"></div>
+
+    <button type="button" class="edit-photo-btn" (click)="photoInput.click()" [disabled]="uploadingPhoto()">
+      @if (uploadingPhoto()) {
+        <ion-spinner name="crescent" />
+      } @else {
+        <ion-icon name="create-outline" />
+      }
+    </button>
+    <input #photoInput type="file" accept="image/*" hidden (change)="onPhotoSelected($event)" />
+
     <div class="hero-info">
-      <h2>{{ displayName() }}</h2>
+      @if (!editingName()) {
+        <h2>
+          <span class="name-text">{{ displayName() }}</span>
+          <button type="button" class="edit-name-btn" (click)="startEditName()">
+            <ion-icon name="create-outline" />
+          </button>
+        </h2>
+      } @else {
+        <div class="name-edit">
+          <div class="name-edit-row">
+            <ion-input class="name-input" placeholder="Marca" [value]="brandDraft()"
+              (ionInput)="onBrandDraftChange($any($event.detail.value))" autofocus />
+            <ion-input class="name-input" placeholder="Modelo" [value]="modelDraft()"
+              (ionInput)="onModelDraftChange($any($event.detail.value))" />
+            <button type="button" class="name-cancel-btn" (click)="cancelEditName()">
+              <ion-icon name="close-outline" />
+            </button>
+            <button type="button" class="name-save-btn" (click)="saveEditName()">
+              <ion-icon name="checkmark-outline" />
+            </button>
+          </div>
+          <span class="name-counter" [class.limit-reached]="nameLimitReached()">
+            {{ nameCharsUsed() }}/{{ nameCharsLimit }}
+          </span>
+        </div>
+      }
       <p>{{ vehicle.currentMileage.toLocaleString('es-ES') }} km · {{ vehicle.year }}</p>
     </div>
   </div>
