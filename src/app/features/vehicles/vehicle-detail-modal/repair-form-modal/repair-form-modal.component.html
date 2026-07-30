@@ -6,12 +6,6 @@
       </ion-button>
     </ion-buttons>
     <div class="modal-title">{{ isEdit() ? 'Editar reparación' : 'Nueva reparación' }}</div>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="save()" [disabled]="loading()">
-        @if (loading()) { <ion-spinner name="crescent" /> }
-        @else { <strong>Guardar</strong> }
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
