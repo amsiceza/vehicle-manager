@@ -1,0 +1,18 @@
+<div class="swipe-action swipe-action--left" [class.is-visible]="offset() > 0">
+  <button type="button" class="action-btn action-btn--more" (click)="onMoreClick($event)" aria-label="Más opciones">
+    <ion-icon name="menu-outline" />
+  </button>
+</div>
+
+<div class="swipe-action swipe-action--right" [class.is-visible]="offset() < 0">
+  <button type="button" class="action-btn action-btn--delete" (click)="onDeleteClick($event)" aria-label="Eliminar">
+    <ion-icon name="trash-outline" />
+  </button>
+</div>
+
+<div class="swipe-content" [class.no-transition]="dragging()" [style.transform]="'translateX(' + offset() + 'px)'">
+  <ng-content></ng-content>
+  @if (offset() !== 0 && !dragging()) {
+    <div class="swipe-overlay" (click)="close()"></div>
+  }
+</div>
