@@ -11,6 +11,7 @@ import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model'
 import { MaintenanceLog, MAINTENANCE_ICONS } from '../../../core/models/maintenance-log.model';
 import { ModificationLog, DEFAULT_MODIFICATION_ICON } from '../../../core/models/modification-log.model';
 import { RepairLog } from '../../../core/models/repair-log.model';
+import { Reminder } from '../../../core/models/reminder.model';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
 import { SwipeableCardComponent } from '../../../shared/components/swipeable-card/swipeable-card.component';
@@ -46,9 +47,11 @@ export class VehicleDetailModalComponent implements OnInit {
   readonly loading = signal(true);
   readonly uploadingPhoto = signal(false);
   readonly activeTab = signal<Tab>('mantenimiento');
+  readonly showHistorial = signal(false);
   readonly maintenanceLogs = signal<MaintenanceLog[]>([]);
   readonly modifications = signal<ModificationLog[]>([]);
   readonly repairs = signal<RepairLog[]>([]);
+  readonly reminders = signal<Reminder[]>([]);
 
   readonly MAINTENANCE_ICONS = MAINTENANCE_ICONS;
   readonly DEFAULT_MODIFICATION_ICON = DEFAULT_MODIFICATION_ICON;
@@ -59,19 +62,27 @@ export class VehicleDetailModalComponent implements OnInit {
   readonly totalModCost    = computed(() => this.modifications().reduce((s, l) => s + l.cost, 0));
   readonly totalRepairCost = computed(() => this.repairs().reduce((s, l) => s + l.cost, 0));
 
+  readonly remindersDone = computed(() => this.reminders().filter(r => r.isTriggered));
+
   async ngOnInit(): Promise<void> {
-    const [maint, mods, reps] = await Promise.all([
+    const [maint, mods, reps, rems] = await Promise.all([
       this.fs.fetchMaintenanceLogs(this.vehicle.id),
       this.fs.fetchModifications(this.vehicle.id),
       this.fs.fetchRepairLogs(this.vehicle.id),
+      this.fs.fetchReminders(this.vehicle.id),
     ]);
     this.maintenanceLogs.set(maint);
     this.modifications.set(mods);
     this.repairs.set(reps);
+    this.reminders.set(
+      [...rems].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    );
     this.loading.set(false);
   }
 
   dismiss(): void { this.modalCtrl.dismiss(); }
+
+  toggleHistorial(): void { this.showHistorial.update(v => !v); }
 
   async onPhotoSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;

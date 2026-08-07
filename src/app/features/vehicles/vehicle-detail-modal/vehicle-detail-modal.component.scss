@@ -230,6 +230,15 @@
   gap: 10px;
 }
 
+// ── Tab toolbar (Añadir + Historial) ────────────────────────────
+.tab-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
 // ── Add button ────────────────────────────────────────────────
 .add-item-btn {
   appearance: none;
@@ -237,9 +246,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  align-self: flex-start;
   padding: 9px 16px;
-  margin-bottom: 2px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.14);
   border-radius: 999px;
@@ -251,6 +258,34 @@
   ion-icon { font-size: 16px; }
 
   &:active { transform: scale(0.96); background: rgba(255,255,255,0.14); }
+}
+
+// ── Historial toggle chip ────────────────────────────────────────
+.historial-chip {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 999px;
+  color: var(--lg-text-2);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+  ion-icon { font-size: 15px; }
+
+  &:active { transform: scale(0.96); }
+
+  &.active {
+    background: rgba(0,122,255,0.16);
+    border-color: rgba(0,122,255,0.4);
+    color: var(--ion-color-primary);
+  }
 }
 
 // ── Log row ───────────────────────────────────────────────────

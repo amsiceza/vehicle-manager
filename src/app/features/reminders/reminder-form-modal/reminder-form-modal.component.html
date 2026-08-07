@@ -5,16 +5,12 @@
         <ion-icon name="close-outline" slot="icon-only" />
       </ion-button>
     </ion-buttons>
-    <div class="modal-title">{{ resetMode ? 'Configurar siguiente aviso' : (isEdit() ? 'Editar aviso' : 'Nuevo aviso') }}</div>
+    <div class="modal-title">{{ isEdit() ? 'Editar aviso' : 'Nuevo aviso' }}</div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="modal-content">
   <div class="page-content">
-
-    @if (resetMode) {
-      <p class="reset-hint">Este aviso se marcará como completado. Indica cuándo debe avisarte la próxima vez.</p>
-    }
 
     <div class="form-group">
       <label>Título</label>
@@ -44,7 +40,7 @@
 
     <ion-button expand="block" (click)="save()" [disabled]="loading()">
       @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
-      {{ resetMode ? 'Guardar' : (isEdit() ? 'Actualizar' : 'Añadir') }}
+      {{ isEdit() ? 'Actualizar' : 'Añadir' }}
     </ion-button>
   </div>
 </ion-content>

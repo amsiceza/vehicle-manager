@@ -61,8 +61,8 @@
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 2px solid rgba(52,199,89,0.45);
-  background: rgba(52,199,89,0.12);
+  border: 2px solid rgba(0,122,255,0.45);
+  background: rgba(0,122,255,0.12);
   display: flex; align-items: center; justify-content: center;
   align-self: center;
   padding: 0;
@@ -70,18 +70,18 @@
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
 
-  ion-icon { font-size: 18px; color: var(--ion-color-success); }
+  ion-icon { font-size: 18px; color: var(--ion-color-primary); }
 
   &:active { transform: scale(0.88); }
 
   &.checked {
-    background: var(--ion-color-success);
-    border-color: var(--ion-color-success);
+    background: var(--ion-color-primary);
+    border-color: var(--ion-color-primary);
     ion-icon { color: #fff; }
   }
 }
 
-:root.theme-light .check-btn { background: rgba(52,199,89,0.10); }
+:root.theme-light .check-btn { background: rgba(0,122,255,0.10); }
 
 .alert-triggers { display: flex; flex-wrap: wrap; gap: 6px; }
 

@@ -56,11 +56,13 @@ export class ReminderListPage implements OnInit {
           .then(rs => rs.map(r => ({ reminder: r, vehicleName: `${v.brand} ${v.model}` }))))
       );
       this.reminders.set(
-        remindersNested.flat().sort((a, b) => {
-          const da = a.reminder.dueDate?.getTime() ?? Infinity;
-          const db = b.reminder.dueDate?.getTime() ?? Infinity;
-          return da - db;
-        })
+        remindersNested.flat()
+          .filter(r => !r.reminder.isTriggered)
+          .sort((a, b) => {
+            const da = a.reminder.dueDate?.getTime() ?? Infinity;
+            const db = b.reminder.dueDate?.getTime() ?? Infinity;
+            return da - db;
+          })
       );
       const logs = await Promise.all(
         vehicles.map(v => this.fs.fetchMaintenanceLogs(v.id).then(l => ({ vehicle: v, logs: l })))
@@ -185,9 +187,9 @@ export class ReminderListPage implements OnInit {
       buttons: [
         { text: 'Editar', icon: 'create-outline', handler: () => this.openReminderForm(item) },
         {
-          text: item.reminder.isTriggered ? 'Marcar como pendiente' : 'Marcar como completado',
+          text: 'Marcar como completado',
           icon: 'checkmark-circle-outline',
-          handler: () => this.toggleReminderTriggered(item),
+          handler: () => this.markReminderDone(item),
         },
         { text: 'Eliminar', icon: 'trash-outline', role: 'destructive', handler: () => this.confirmDeleteReminder(item) },
         { text: 'Cancelar', role: 'cancel' },
@@ -210,30 +212,32 @@ export class ReminderListPage implements OnInit {
 
   onCheckClick(event: Event, item: ReminderItem): void {
     event.stopPropagation();
-    void this.resetReminder(item);
+    if (item.reminder.isTriggered) return;
+    void this.completeAndRenew(item);
   }
 
-  private async resetReminder(item: ReminderItem): Promise<void> {
+  private async completeAndRenew(item: ReminderItem): Promise<void> {
+    await this.fs.updateReminder({ id: item.reminder.id, isTriggered: true });
+    this.reminders.update(list => list.filter(r => r.reminder.id !== item.reminder.id));
+
     const modal = await this.modalCtrl.create({
       component: ReminderFormModalComponent,
-      componentProps: {
-        vehicleId: item.reminder.vehicleId,
-        resetMode: true,
-        reminder: { ...item.reminder, dueDate: undefined, dueMileage: undefined, isTriggered: false },
-      },
+      componentProps: { vehicleId: item.reminder.vehicleId, prefillTitle: item.reminder.title },
     });
     await modal.present();
     const { data, role } = await modal.onWillDismiss<Reminder>();
     if (role !== 'save' || !data) return;
     this.reminders.update(list =>
-      list.map(r => (r.reminder.id === data.id ? { ...r, reminder: data } : r)));
+      [...list, { reminder: data, vehicleName: item.vehicleName }].sort((a, b) => {
+        const da = a.reminder.dueDate?.getTime() ?? Infinity;
+        const db = b.reminder.dueDate?.getTime() ?? Infinity;
+        return da - db;
+      }));
   }
 
-  private async toggleReminderTriggered(item: ReminderItem): Promise<void> {
-    const isTriggered = !item.reminder.isTriggered;
-    await this.fs.updateReminder({ id: item.reminder.id, isTriggered });
-    this.reminders.update(list =>
-      list.map(r => (r.reminder.id === item.reminder.id ? { ...r, reminder: { ...r.reminder, isTriggered } } : r)));
+  private async markReminderDone(item: ReminderItem): Promise<void> {
+    await this.fs.updateReminder({ id: item.reminder.id, isTriggered: true });
+    this.reminders.update(list => list.filter(r => r.reminder.id !== item.reminder.id));
   }
 
   private async deleteReminder(item: ReminderItem): Promise<void> {

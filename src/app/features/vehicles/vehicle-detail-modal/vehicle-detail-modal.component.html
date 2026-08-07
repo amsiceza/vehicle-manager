@@ -108,13 +108,21 @@
   } @else {
     <div class="tab-content">
 
-      <button type="button" class="add-item-btn" (click)="addCurrentTabItem()">
-        <ion-icon name="add-outline" />
-        Añadir
-      </button>
+      <div class="tab-toolbar">
+        <button type="button" class="add-item-btn" (click)="addCurrentTabItem()">
+          <ion-icon name="add-outline" />
+          Añadir
+        </button>
+        @if (activeTab() === 'mantenimiento') {
+          <button type="button" class="historial-chip" [class.active]="showHistorial()" (click)="toggleHistorial()">
+            <ion-icon [name]="showHistorial() ? 'construct-outline' : 'time-outline'" />
+            {{ showHistorial() ? 'Registros' : 'Historial' }}
+          </button>
+        }
+      </div>
 
       <!-- MANTENIMIENTOS -->
-      @if (activeTab() === 'mantenimiento') {
+      @if (activeTab() === 'mantenimiento' && !showHistorial()) {
         @for (log of maintenanceLogs(); track log.id) {
           <app-swipeable-card [radius]="16" (delete)="confirmDeleteMaintenance(log)" (more)="openMaintenanceOptions(log)">
             <button type="button" class="log-row" (click)="openMaintenanceForm(log)">
@@ -132,6 +140,27 @@
         } @empty {
           <app-empty-state icon="construct-outline" title="Sin mantenimientos" subtitle="Aún no hay registros."
             actionLabel="Añadir" (action)="openMaintenanceForm()" />
+        }
+      }
+
+      <!-- HISTORIAL DE AVISOS (realizados) -->
+      @if (activeTab() === 'mantenimiento' && showHistorial()) {
+        @for (rem of remindersDone(); track rem.id) {
+          <div class="log-row historial-row">
+            <div class="log-icon green">
+              <ion-icon name="checkmark-circle-outline" />
+            </div>
+            <div class="log-body">
+              <div class="log-title">{{ rem.title }}</div>
+              <div class="log-meta">
+                @if (rem.dueDate) { {{ fmtDate(rem.dueDate) }} }
+                @if (rem.dueDate && rem.dueMileage) { · }
+                @if (rem.dueMileage) { {{ rem.dueMileage.toLocaleString('es-ES') }} km }
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <app-empty-state icon="time-outline" title="Sin historial" subtitle="Aún no hay avisos completados para este vehículo." />
         }
       }
 
