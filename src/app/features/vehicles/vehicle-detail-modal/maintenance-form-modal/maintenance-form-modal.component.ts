@@ -25,6 +25,7 @@ import { IconPickerComponent } from '../../../../shared/components/icon-picker/i
 export class MaintenanceFormModalComponent implements OnInit {
   @Input() vehicleId!: string;
   @Input() log?: MaintenanceLog;
+  @Input() prefillType?: MaintenanceType;
 
   private readonly fs = inject(FirestoreService);
   private readonly modalCtrl = inject(ModalController);
@@ -54,6 +55,8 @@ export class MaintenanceFormModalComponent implements OnInit {
       this.notes.set(this.log.notes);
       this.icon.set(this.log.icon ?? MAINTENANCE_ICONS[this.log.type]);
       this.iconTouched = !!this.log.icon;
+    } else if (this.prefillType) {
+      this.onTypeChange(this.prefillType);
     }
   }
 

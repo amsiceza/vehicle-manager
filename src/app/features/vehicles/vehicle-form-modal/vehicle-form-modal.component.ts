@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, Input, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonContent,
@@ -24,7 +24,9 @@ import { Vehicle } from '../../../core/models/vehicle.model';
   templateUrl: './vehicle-form-modal.component.html',
   styleUrls: ['./vehicle-form-modal.component.scss'],
 })
-export class VehicleFormModalComponent {
+export class VehicleFormModalComponent implements OnInit {
+  @Input() vehicle?: Vehicle;
+
   private readonly auth = inject(AuthService);
   private readonly fs = inject(FirestoreService);
   private readonly storage = inject(StorageService);
@@ -33,6 +35,8 @@ export class VehicleFormModalComponent {
   private readonly modalCtrl = inject(ModalController);
 
   private readonly vehicleId = crypto.randomUUID();
+
+  readonly isEditMode = signal(false);
 
   readonly brand = signal('');
   readonly model = signal('');
@@ -48,6 +52,18 @@ export class VehicleFormModalComponent {
 
   readonly currentYear = new Date().getFullYear();
   readonly years = Array.from({ length: 60 }, (_, i) => this.currentYear - i);
+
+  ngOnInit(): void {
+    const v = this.vehicle;
+    if (!v) return;
+    this.isEditMode.set(true);
+    this.brand.set(v.brand);
+    this.model.set(v.model);
+    this.licensePlate.set(v.licensePlate);
+    this.year.set(v.year);
+    this.currentMileage.set(v.currentMileage);
+    this.photoPreviewURL.set(v.photoURLs[0] ?? '');
+  }
 
   dismiss(): void { this.modalCtrl.dismiss(); }
 
@@ -73,19 +89,35 @@ export class VehicleFormModalComponent {
     this.loading.set(true);
     this.error.set('');
     try {
-      const user = await this.fs.fetchUser(uid);
-      if (!user) {
-        this.error.set('Sesión no encontrada.');
-        return;
-      }
-
-      const photoURLs: string[] = [];
+      const editing = this.vehicle;
+      const photoURLs = editing ? [...editing.photoURLs] : [];
       const file = this.photoFile();
       if (file) {
         const url = this.demo.active()
           ? URL.createObjectURL(file)
           : await this.storage.uploadImage(file, `vehicles/${this.vehicleId}/photo-${Date.now()}.jpg`);
-        photoURLs.push(url);
+        photoURLs[0] = url;
+      }
+
+      if (editing) {
+        const updated: Vehicle = {
+          ...editing,
+          brand: this.brand().trim(),
+          model: this.model().trim(),
+          licensePlate: this.licensePlate().toUpperCase().trim(),
+          year: this.year(),
+          currentMileage: this.currentMileage(),
+          photoURLs,
+        };
+        await this.fs.updateVehicle(updated);
+        await this.modalCtrl.dismiss(updated, 'save');
+        return;
+      }
+
+      const user = await this.fs.fetchUser(uid);
+      if (!user) {
+        this.error.set('Sesión no encontrada.');
+        return;
       }
 
       const built: Vehicle = {

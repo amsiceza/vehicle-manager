@@ -2,7 +2,7 @@ import { Component, Input, OnInit, signal, inject, computed } from '@angular/cor
 import {
   IonContent, IonHeader, IonToolbar, IonButtons, IonButton,
   IonIcon, IonSegment, IonSegmentButton, IonLabel, IonSpinner, IonInput,
-  ModalController, AlertController, ToastController,
+  ModalController, AlertController, ToastController, ActionSheetController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../core/services/firestore.service';
 import { StorageService } from '../../../core/services/storage.service';
@@ -41,6 +41,7 @@ export class VehicleDetailModalComponent implements OnInit {
   private readonly modalCtrl = inject(ModalController);
   private readonly alertCtrl = inject(AlertController);
   private readonly toastCtrl = inject(ToastController);
+  private readonly actionSheetCtrl = inject(ActionSheetController);
 
   readonly loading = signal(true);
   readonly uploadingPhoto = signal(false);
@@ -246,13 +247,28 @@ export class VehicleDetailModalComponent implements OnInit {
     );
   }
 
-  async openOptionsMenu(): Promise<void> {
-    const toast = await this.toastCtrl.create({
-      message: 'Menú de opciones próximamente',
-      duration: 1500,
-      position: 'bottom',
+  async openMaintenanceOptions(log: MaintenanceLog): Promise<void> {
+    await this.presentOptions(log.type, () => this.openMaintenanceForm(log), () => this.confirmDeleteMaintenance(log));
+  }
+
+  async openModificationOptions(mod: ModificationLog): Promise<void> {
+    await this.presentOptions(mod.partName, () => this.openModificationForm(mod), () => this.confirmDeleteModification(mod));
+  }
+
+  async openRepairOptions(rep: RepairLog): Promise<void> {
+    await this.presentOptions(rep.description, () => this.openRepairForm(rep), () => this.confirmDeleteRepair(rep));
+  }
+
+  private async presentOptions(header: string, onEdit: () => void, onDelete: () => void): Promise<void> {
+    const sheet = await this.actionSheetCtrl.create({
+      header,
+      buttons: [
+        { text: 'Editar', icon: 'create-outline', handler: onEdit },
+        { text: 'Eliminar', icon: 'trash-outline', role: 'destructive', handler: onDelete },
+        { text: 'Cancelar', role: 'cancel' },
+      ],
     });
-    await toast.present();
+    await sheet.present();
   }
 
   private async confirmAndDelete(header: string, message: string, handler: () => Promise<void>): Promise<void> {

@@ -116,7 +116,7 @@
       <!-- MANTENIMIENTOS -->
       @if (activeTab() === 'mantenimiento') {
         @for (log of maintenanceLogs(); track log.id) {
-          <app-swipeable-card [radius]="16" (delete)="confirmDeleteMaintenance(log)" (more)="openOptionsMenu()">
+          <app-swipeable-card [radius]="16" (delete)="confirmDeleteMaintenance(log)" (more)="openMaintenanceOptions(log)">
             <button type="button" class="log-row" (click)="openMaintenanceForm(log)">
               <div class="log-icon blue">
                 <ion-icon [name]="log.icon ?? MAINTENANCE_ICONS[log.type]" />
@@ -138,7 +138,7 @@
       <!-- MODIFICACIONES -->
       @if (activeTab() === 'modificaciones') {
         @for (mod of modifications(); track mod.id) {
-          <app-swipeable-card [radius]="16" (delete)="confirmDeleteModification(mod)" (more)="openOptionsMenu()">
+          <app-swipeable-card [radius]="16" (delete)="confirmDeleteModification(mod)" (more)="openModificationOptions(mod)">
             <button type="button" class="log-row" (click)="openModificationForm(mod)">
               <div class="log-icon purple">
                 <ion-icon [name]="mod.icon ?? DEFAULT_MODIFICATION_ICON" />
@@ -161,7 +161,7 @@
       <!-- REPARACIONES -->
       @if (activeTab() === 'reparaciones') {
         @for (rep of repairs(); track rep.id) {
-          <app-swipeable-card [radius]="16" (delete)="confirmDeleteRepair(rep)" (more)="openOptionsMenu()">
+          <app-swipeable-card [radius]="16" (delete)="confirmDeleteRepair(rep)" (more)="openRepairOptions(rep)">
             <button type="button" class="log-row" (click)="openRepairForm(rep)">
               <div class="log-icon" [class.green]="rep.isInsuranceClaim" [class.orange]="!rep.isInsuranceClaim">
                 <ion-icon [name]="repairIcon(rep)" />

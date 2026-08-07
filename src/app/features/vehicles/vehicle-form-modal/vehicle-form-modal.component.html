@@ -5,7 +5,7 @@
         <ion-icon name="close-outline" slot="icon-only" />
       </ion-button>
     </ion-buttons>
-    <div class="modal-title">Nuevo vehículo</div>
+    <div class="modal-title">{{ isEditMode() ? 'Editar vehículo' : 'Nuevo vehículo' }}</div>
   </ion-toolbar>
 </ion-header>
 
@@ -73,7 +73,7 @@
 
     <ion-button expand="block" (click)="save()" [disabled]="loading()">
       @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
-      Añadir vehículo
+      {{ isEditMode() ? 'Guardar cambios' : 'Añadir vehículo' }}
     </ion-button>
   </div>
 
