@@ -1,0 +1,81 @@
+<ion-header class="ion-no-border modal-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only" />
+      </ion-button>
+    </ion-buttons>
+    <div class="modal-title">{{ isEditMode() ? 'Editar vehículo' : 'Nuevo vehículo' }}</div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="modal-body">
+
+  <div class="photo-picker" (click)="photoInput.click()">
+    @if (photoPreviewURL()) {
+      <img [src]="photoPreviewURL()" alt="Foto del vehículo" class="photo-preview" />
+    } @else {
+      <div class="photo-placeholder">
+        <ion-icon name="camera-outline" />
+        <span>Añadir foto</span>
+      </div>
+    }
+    <div class="photo-gradient"></div>
+  </div>
+  <input #photoInput type="file" accept="image/*" hidden (change)="onPhotoSelected($event)" />
+
+  <div class="page-content">
+    <div class="sheet-handle"></div>
+
+    <div class="form-group">
+      <label>Marca</label>
+      <ion-input placeholder="Toyota, BMW, Seat…"
+        [ngModel]="brand()" (ngModelChange)="brand.set($event)" />
+    </div>
+
+    <div class="form-group">
+      <label>Modelo</label>
+      <ion-input placeholder="Corolla, Serie 3, Ibiza…"
+        [ngModel]="model()" (ngModelChange)="model.set($event)" />
+    </div>
+
+    <div class="form-group">
+      <label>Matrícula</label>
+      <ion-input placeholder="1234 ABC" style="text-transform: uppercase"
+        [ngModel]="licensePlate()" (ngModelChange)="licensePlate.set($event)" />
+    </div>
+
+    <div class="row-fields">
+      <div class="form-group">
+        <label>Año</label>
+        <ion-select
+          [ngModel]="year()" (ngModelChange)="year.set($event)"
+          interface="action-sheet" placeholder="Año">
+          @for (y of years; track y) {
+            <ion-select-option [value]="y">{{ y }}</ion-select-option>
+          }
+        </ion-select>
+      </div>
+      <div class="form-group">
+        <label>Km actuales</label>
+        <ion-input type="number" placeholder="0"
+          [ngModel]="currentMileage()" (ngModelChange)="currentMileage.set(+$event)" />
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="error-banner">
+        <ion-icon name="alert-circle-outline" />
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <ion-button expand="block" (click)="save()" [disabled]="loading()">
+      @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
+      {{ isEditMode() ? 'Guardar cambios' : 'Añadir vehículo' }}
+    </ion-button>
+  </div>
+
+  </div>
+</ion-content>

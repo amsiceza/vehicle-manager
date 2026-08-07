@@ -1,0 +1,50 @@
+<ion-header class="ion-no-border modal-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only" />
+      </ion-button>
+    </ion-buttons>
+    <div class="modal-title">{{ resetMode ? 'Configurar siguiente aviso' : (isEdit() ? 'Editar aviso' : 'Nuevo aviso') }}</div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="page-content">
+
+    @if (resetMode) {
+      <p class="reset-hint">Este aviso se marcará como completado. Indica cuándo debe avisarte la próxima vez.</p>
+    }
+
+    <div class="form-group">
+      <label>Título</label>
+      <ion-input placeholder="Renovar seguro, revisar ITV…"
+        [ngModel]="title()" (ngModelChange)="title.set($event)" />
+    </div>
+
+    <div class="row-fields">
+      <div class="form-group">
+        <label>Fecha límite</label>
+        <ion-input type="date"
+          [ngModel]="dueDate()" (ngModelChange)="dueDate.set($event)" />
+      </div>
+      <div class="form-group">
+        <label>Km límite</label>
+        <ion-input type="number" placeholder="Opcional"
+          [ngModel]="dueMileage()" (ngModelChange)="dueMileage.set($event === '' ? null : +$event)" />
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="error-banner">
+        <ion-icon name="alert-circle-outline" />
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <ion-button expand="block" (click)="save()" [disabled]="loading()">
+      @if (loading()) { <ion-spinner name="crescent" slot="start" /> }
+      {{ resetMode ? 'Guardar' : (isEdit() ? 'Actualizar' : 'Añadir') }}
+    </ion-button>
+  </div>
+</ion-content>

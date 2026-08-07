@@ -27,7 +27,7 @@
   } @else {
     <div class="grid">
       @for (v of vehicles(); track v.id) {
-        <app-swipeable-card (delete)="confirmDelete(v)" (more)="openOptionsMenu()">
+        <app-swipeable-card (delete)="confirmDelete(v)" (more)="openOptionsMenu(v)">
           <button class="v-card" (click)="openDetail(v)">
             <div class="v-photo">
               @if (v.photoURLs[0]) {

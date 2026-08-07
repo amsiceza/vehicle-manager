@@ -8,10 +8,11 @@
 .alert-card {
   display: flex; align-items: flex-start; gap: 12px;
   padding: 14px;
-  border-radius: 16px;
+  border-radius: var(--card-radius-left, 16px) var(--card-radius-right, 16px) var(--card-radius-right, 16px) var(--card-radius-left, 16px);
   border: 1px solid rgba(255,149,0,0.25);
   background: rgba(255,149,0,0.06);
   position: relative;
+  transition: border-radius 0.2s ease;
   &.overdue { border-color: rgba(255,55,95,0.35); background: rgba(255,55,95,0.07); }
 }
 
@@ -35,9 +36,10 @@
 
 .reminder-card {
   display: flex; align-items: flex-start; gap: 12px; padding: 14px;
-  border-radius: 16px;
+  border-radius: var(--card-radius-left, 16px) var(--card-radius-right, 16px) var(--card-radius-right, 16px) var(--card-radius-left, 16px);
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.10);
+  transition: border-radius 0.2s ease;
   &.triggered { opacity: 0.5; }
 }
 
@@ -52,6 +54,34 @@
 .reminder-body  { flex: 1; }
 .reminder-title { font-size: 14px; font-weight: 600; color: var(--lg-text); margin-bottom: 2px; }
 .reminder-vehicle { font-size: 12px; color: var(--lg-text-2); margin-bottom: 6px; }
+
+.check-btn {
+  width: 32px; height: 32px; min-width: 32px; min-height: 32px;
+  box-sizing: border-box;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(52,199,89,0.45);
+  background: rgba(52,199,89,0.12);
+  display: flex; align-items: center; justify-content: center;
+  align-self: center;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+
+  ion-icon { font-size: 18px; color: var(--ion-color-success); }
+
+  &:active { transform: scale(0.88); }
+
+  &.checked {
+    background: var(--ion-color-success);
+    border-color: var(--ion-color-success);
+    ion-icon { color: #fff; }
+  }
+}
+
+:root.theme-light .check-btn { background: rgba(52,199,89,0.10); }
 
 .alert-triggers { display: flex; flex-wrap: wrap; gap: 6px; }
 
