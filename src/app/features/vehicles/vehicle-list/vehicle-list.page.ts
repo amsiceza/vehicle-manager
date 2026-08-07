@@ -2,7 +2,7 @@ import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import {
   IonContent, IonHeader, IonToolbar, IonTitle,
   IonFab, IonFabButton, IonIcon, IonCard, IonCardContent,
-  ModalController, AlertController, ToastController,
+  ModalController, AlertController, ActionSheetController,
 } from '@ionic/angular/standalone';
 import { FirestoreService } from '../../../core/services/firestore.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -12,6 +12,7 @@ import { CheckProLimitUseCase } from '../../../domain/use-cases/check-pro-limit.
 import { Vehicle, vehicleDisplayName } from '../../../core/models/vehicle.model';
 import { User } from '../../../core/models/user.model';
 import { VehicleDetailModalComponent } from '../vehicle-detail-modal/vehicle-detail-modal.component';
+import { VehicleFormModalComponent } from '../vehicle-form-modal/vehicle-form-modal.component';
 import { PaywallComponent } from '../../../shared/components/paywall/paywall.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingComponent } from '../../../shared/components/loading/loading.component';
@@ -36,7 +37,7 @@ export class VehicleListPage implements OnInit {
   private readonly limitUseCase = inject(CheckProLimitUseCase);
   private readonly modalCtrl = inject(ModalController);
   private readonly alertCtrl = inject(AlertController);
-  private readonly toastCtrl = inject(ToastController);
+  private readonly actionSheetCtrl = inject(ActionSheetController);
 
   readonly theme = inject(ThemeService);
   readonly vehicles = signal<Vehicle[]>([]);
@@ -85,8 +86,23 @@ export class VehicleListPage implements OnInit {
   }
 
   handleAdd(): void {
-    if (this.canAdd()) { /* TODO: add form */ }
+    if (this.canAdd()) { void this.openVehicleForm(); }
     else { this.showPaywall.set(true); }
+  }
+
+  private async openVehicleForm(vehicle?: Vehicle): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: VehicleFormModalComponent,
+      componentProps: vehicle ? { vehicle } : {},
+    });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss<Vehicle>();
+    if (role !== 'save' || !data) return;
+    if (vehicle) {
+      this.vehicles.update(list => list.map(v => (v.id === data.id ? data : v)));
+    } else {
+      this.vehicles.update(list => [data, ...list]);
+    }
   }
 
   async confirmDelete(vehicle: Vehicle): Promise<void> {
@@ -101,13 +117,16 @@ export class VehicleListPage implements OnInit {
     await alert.present();
   }
 
-  async openOptionsMenu(): Promise<void> {
-    const toast = await this.toastCtrl.create({
-      message: 'Menú de opciones próximamente',
-      duration: 1500,
-      position: 'bottom',
+  async openOptionsMenu(vehicle: Vehicle): Promise<void> {
+    const sheet = await this.actionSheetCtrl.create({
+      header: vehicleDisplayName(vehicle),
+      buttons: [
+        { text: 'Editar', icon: 'create-outline', handler: () => this.openVehicleForm(vehicle) },
+        { text: 'Eliminar', icon: 'trash-outline', role: 'destructive', handler: () => this.confirmDelete(vehicle) },
+        { text: 'Cancelar', role: 'cancel' },
+      ],
     });
-    await toast.present();
+    await sheet.present();
   }
 
   private async deleteVehicle(vehicle: Vehicle): Promise<void> {
