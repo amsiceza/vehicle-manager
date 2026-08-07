@@ -23,7 +23,7 @@ import { Reminder } from '../../../core/models/reminder.model';
 export class ReminderFormModalComponent implements OnInit {
   @Input() vehicleId!: string;
   @Input() reminder?: Reminder;
-  @Input() resetMode = false;
+  @Input() prefillTitle?: string;
 
   private readonly fs = inject(FirestoreService);
   private readonly modalCtrl = inject(ModalController);
@@ -43,6 +43,8 @@ export class ReminderFormModalComponent implements OnInit {
       this.title.set(this.reminder.title);
       this.dueDate.set(this.reminder.dueDate ? this.toInputDate(this.reminder.dueDate) : '');
       this.dueMileage.set(this.reminder.dueMileage ?? null);
+    } else if (this.prefillTitle) {
+      this.title.set(this.prefillTitle);
     }
   }
 
